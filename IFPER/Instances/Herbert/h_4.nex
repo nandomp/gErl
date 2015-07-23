@@ -1,0 +1,11 @@
+h([m,a,b])->"n".
+h([m,a,b])->"o".
+h([m,a,b,m])->"a".
+h([m,a,b,m,c])->"b".
+h([m,a,b,m,c,d])->"n".
+h([m,a,b,m,c,d])->"o".
+h([m,a,b,m,c,d,m])->"c".
+h([m,a,b,m,c,d,m,e])->"d".
+h([m,a,b,m,c,d,m,e,f])->"n".
+h([m,a,b,m,c,d,m,e,f])->"o".
+h([m,a,b,m,c,d,m,e,f,m])->"e".

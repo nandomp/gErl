@@ -1,0 +1,10 @@
+letter([r,s,c])->"d".
+letter([r,s,c,d])->"s".
+letter([r,s,c,d,s])->"t".
+letter([r,s,c,d,s,t])->"d".
+letter([r,s,c,d,s,t,d])->"e".
+letter([r,s,c,d,s,t,d,e])->"t".
+letter([r,s,c,d,s,t,d,e,t])->"u".
+letter([r,s,c,d,s,t,d,e,t,u])->"e".
+letter([r,s,c,d,s,t,d,e,t,u,e])->"f".
+letter([r,s,c,d,s,t,d,e,t,u,e,f])->"u".

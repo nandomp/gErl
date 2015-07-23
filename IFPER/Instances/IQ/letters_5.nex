@@ -1,0 +1,7 @@
+letter([m,n])->"n".
+letter([m,n,l])->"l".
+letter([m,n,l,n])->"n".
+letter([m,n,l,n,k])->"k".
+letter([m,n,l,n,k,n])->"n".
+letter([m,n,l,n,k,n,j])->"j".
+letter([m,n,l,n,k,n,j,n])->"n".

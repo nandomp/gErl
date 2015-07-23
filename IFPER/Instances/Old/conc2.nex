@@ -1,0 +1,15 @@
+conc([c],[d,e])->[c,c].
+conc([c],[d,e])->[d,e,d,e].
+conc([c],[d,e])->[d,e,c].
+conc([e,i],[h])->[e,i,e,i].
+conc([e,i],[h])->[h,h].
+conc([e,i],[h])->[h,e,i].
+conc([a,b,c,d],[e])->[a,b,c,d,a,b,c,d].
+conc([a,b,c,d],[e])->[e,e].
+conc([a,b,c,d],[e])->[e,a,b,c,d].
+conc([a],[])->[a,a].
+conc([a],[])->[].
+conc([],[n,h])->[n,h,n,h].
+conc([e,i,h],[t,y])->[t,y,t,y].
+conc([e,i,h],[t,y])->[e,i,h,e,i,h].
+conc([e,i,h],[t,y])->[t,y,e,i,h].

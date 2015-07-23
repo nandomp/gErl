@@ -1,0 +1,3 @@
+h([w,a,t,x,a,t])->"x".
+h([w,a,t,x,a,t,w,a,t])->"w".
+h([w,a,t,x,a,t,w,a,t,x,a,t])->"x".

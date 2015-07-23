@@ -1,0 +1,9 @@
+h([a,a,a])->"b".
+h([a,a,a,b])->"b".
+h([a,a,a,b,b])->"b".
+h([a,a,a,b,b,b])->"c".
+h([a,a,a,b,b,b,c])->"c".
+h([a,a,a,b,b,b,c,c])->"c".
+h([a,a,a,b,b,b,c,c,c])->"d".
+h([a,a,a,b,b,b,c,c,c,d])->"d".
+h([a,a,a,b,b,b,c,c,c,d,d])->"d".

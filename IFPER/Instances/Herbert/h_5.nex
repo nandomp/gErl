@@ -1,0 +1,16 @@
+h([d,e,f,g])->"g".
+h([d,e,f,g,e])->"e".
+h([d,e,f,g,e,f])->"f".
+h([d,e,f,g,e,f,g])->"g".
+h([d,e,f,g,e,f,g,h])->"h".
+h([d,e,f,g,e,f,g,h,f])->"f".
+h([d,e,f,g,e,f,g,h,f,g])->"g".
+h([d,e,f,g,e,f,g,h,f,g,h])->"h".
+h([d,e,f,g])->"f".
+h([d,e,f,g,e])->"g".
+h([d,e,f,g,e,f])->"e".
+h([d,e,f,g,e,f,g])->"f".
+h([d,e,f,g,e,f,g,h])->"g".
+h([d,e,f,g,e,f,g,h,f])->"h".
+h([d,e,f,g,e,f,g,h,f,g])->"f".
+h([d,e,f,g,e,f,g,h,f,g,h])->"g".

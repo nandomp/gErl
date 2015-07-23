@@ -1,0 +1,7 @@
+web({{[olympics,games],[swim]},{[swim],[win]},{[win],[medal]}},[{olympics,20},{summer,20},{athens,40}],20)->true.
+web({{[medal],[match]},{[match],[team,players]},{[football],[referees]},{[match],[results]}},[{football,20},{europe,10},{champion,30}],40)->true.
+web({{[medal],[match]},{[match],[team,players]},{[final],[scores]}},[{football,30},{europe,10}],40)->true.
+web({{[europe],[team]},{[swim],[win]}},[{olympics,20},{athens,30}],20)->true.
+web({{[football],[match]},{[match],[team,player]}},[{olympics,20},{athens,40}],20)->true.
+web({{[final],[match]},{[players],[result]}},[{olympics,20},{scores,40}],10)->true.
+web({{[final],[match]},{[match],[team,player]}},[{football,20},{athens,40}],20)->true.

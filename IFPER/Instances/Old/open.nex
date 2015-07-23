@@ -1,0 +1,4 @@
+opens([{chubb,3,short,broad},{chub,4,medium,broad},{yale,3,short,narrow},{yale,4,long,normal}])->true.
+opens([{yale,3,long,narrow},{yale,4,long,broad}])->true.
+opens([{abloy,3,short,broad},{chubb,3,short,broad},{rubo,4,long,broad},{yale,4,long,broad}])->true.
+opens([{abloy,4,short,broad},{chubb,3,medium,broad},{rubo,5,long,narrow}])->true.

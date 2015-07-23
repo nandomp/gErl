@@ -1,0 +1,6 @@
+letter([a,b])->"b".
+letter([a,b,a])->"a".
+letter([a,b,a,b])->"b".
+letter([a,b,a,b,a])->"a".
+letter([a,b,a,b,a,b])->"b".
+letter([a,b,a,b,a,b,a])->"a".

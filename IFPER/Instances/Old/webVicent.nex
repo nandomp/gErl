@@ -1,0 +1,2 @@
+web({{[olympics,games],[swim]},{[swim],[win]},{[olympics,games],[boxing]},{[win],[medal]}},[{olympics,30},{held,10},{summer,40}],10)->true.
+web({{[football],[europe]},{[europe],[final]},{[final],[best,player]}},[{football,20},{champion,10}],40)->true.

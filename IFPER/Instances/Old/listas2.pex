@@ -1,0 +1,4 @@
+listas([a,b,c,d])->[a,d,a].
+listas([e,f,g,h,i])->[e,i,e].
+listas([j,k,l,m,n,o])->[j,o,j].
+listas([p,q,r])->[p,r,p].

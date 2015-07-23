@@ -1,0 +1,16 @@
+h([r,s,c,d,s])->"r".
+h([r,s,c,d,s,t])->"s".
+h([r,s,c,d,s,t,d])->"c".
+h([r,s,c,d,s,t,d,e])->"d".
+h([r,s,c,d,s,t,d,e,t])->"s".
+h([r,s,c,d,s,t,d,e,t,u])->"t".
+h([r,s,c,d,s,t,d,e,t,u,e])->"d".
+h([r,s,c,d,s,t,d,e,t,u,e,f])->"e".
+h([r,s,c,d,s,t])->"u".
+h([r,s,c,d,s,t,d,e])->"f".
+h([r,s,c,d,s,t,d,e,t,u])->"v".
+h([r,s,c,d,s,t,d,e,t,u,e,f])->"g".
+h([r,s,c,d,s])->"c".
+h([r,s,c,d,s,t,d])->"s".
+h([r,s,c,d,s,t,d,e,t])->"d".
+h([r,s,c,d,s,t,d,e,t,u,e])->"t".

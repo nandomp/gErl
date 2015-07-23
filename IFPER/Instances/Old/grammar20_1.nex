@@ -1,0 +1,15 @@
+s([the,dog,the,man,the,man])->true.
+s([walks,to,walks,to,the,man])->true.
+s([the,dog,walks,to,walks,to])->true.
+s([the,man,the,house,the,house])->true.
+s([walks,in,walks,in,the,house])->true.
+s([the,man,walks,in,walks,in])->true.
+s([the,dog,the,house,the,house])->true.
+s([walks,on,walks,on,the,house])->true.
+s([the,dog,walks,on,walks,on])->true.
+s([the,small,the,house,the,house])->true.
+s([walks,in,walks,in,the,house])->true.
+s([the,small,dog,walks,in,walks,on])->true.
+s([the,man,the,nasty,dog,the,nasty,dog])->true.
+s([hits,hits,the,nasty,dog])->true.
+s([the,man,hits,hits])->true.

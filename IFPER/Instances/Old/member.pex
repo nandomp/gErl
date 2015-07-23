@@ -1,0 +1,12 @@
+member([a],a)->true.
+member([b],b)->true.
+member([b,a],b)->true.
+member([a,a],a)->true.
+member([a,b],b)->true.
+member([b,a,b],b)->true.
+member([b,a,b],a)->true.
+member([b,a,a],b)->true.
+member([b,a,a],a)->true.
+member([a,a,b],a)->true.
+member([a,a,b,a],b)->true.
+member([a,a,a,b],b)->true.

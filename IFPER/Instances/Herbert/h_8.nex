@@ -1,0 +1,8 @@
+h([m,a,b])->"n".
+h([m,a,b,m])->"a".
+h([m,a,b,m,b])->"b".
+h([m,a,b,m,b,c])->"n".
+h([m,a,b,m,b,c,m])->"b".
+h([m,a,b,m,b,c,m,c])->"c".
+h([m,a,b,m,b,c,m,c,d])->"n".
+h([m,a,b,m,b,c,m,c,d,m])->"c".

@@ -1,0 +1,5 @@
+opens([{abloy,3,short,normal},{abloy,4,medium,broad},{chubb,3,long,narrow}])->true.
+opens([{abloy,3,medium,broad},{chubb,2,long,normal},{chubb,4,medium,broad}])->true.
+opens([{abloy,3,short,broad},{abloy,4,medium,broad},{chubb,3,long,narrow}])->true.
+opens([{abloy,3,medium,broad},{abloy,4,medium,narrow},{chubb,3,long,broad},{yale,4,medium,broad}])->true.
+opens([{abloy,3,medium,narrow},{chubb,6,medium,normal},{rubo,5,short,narrow},{yale,4,long,broad}])->true.

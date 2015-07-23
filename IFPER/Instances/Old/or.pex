@@ -1,0 +1,5 @@
+my_or(true,false)->true.  
+my_or(true,casa)->true.
+my_or(patata,true)->true.
+my_or(false,coche)->coche.
+my_or(ventana,false)->ventana.

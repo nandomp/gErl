@@ -1,0 +1,4 @@
+conc([a],[b,c])->[a,b,c].
+conc([a,b],[c])->[a,b,c].
+conc([a,b,c],[d])->[a,b,c,d].
+conc([a],[b])->[a,b].

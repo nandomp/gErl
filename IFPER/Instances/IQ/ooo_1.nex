@@ -1,0 +1,5 @@
+ooo([a,a,a,b,a,a])->0.
+ooo([a,b,a,a])->0.
+ooo([h,v,v,v,v])->0.
+ooo([g,g,g,g,t])->0.
+ooo([g,g,j,g,g,g])->0.

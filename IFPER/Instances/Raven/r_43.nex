@@ -1,0 +1,60 @@
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[false,[0],[0],[squ]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[[a],false,[0],[squ]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[[a],[0],false,[squ]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[[a],[0],[0],false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[false,false,[0],[squ]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[false,false,false,[squ]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[false,false,false,false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[[a],false,false,[squ]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[[a],[0],false,false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[c,0,0, cir]]]])->[[a],false,false,false].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[false,[0],[0],[cir]].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[[c],false,[0],[cir]].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[[c],[0],false,[cir]].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[[c],[0],[0],false].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[false,false,[0],[cir]].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[false,false,false,[cir]].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[false,false,false,false].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[[c],false,false,[cir]].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[[c],[0],false,false].
+r([[[[a,0,0,cross ]], [[b, 0,0,squ]], [[c,0,0, cir]]],  [[[b,0,0, cross]], [[a, 0,0,squ]]]])->[[c],false,false,false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[false,[0],[0],[cross]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[[b],false,[0],[cross]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[[b],[0],false,[cross]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[[b],[0],[0],false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[false,false,[0],[cross]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[false,false,false,[cross]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[false,false,false,false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[[b],false,false,[cross]].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[[b],[0],false,false].
+r([[[[a,0,0,cross ]], [[b,0,0, squ]], [[c,0,0, cir]]],  [[[a, 0,0, squ]], [[c,0,0, cir]]]])->[[b],false,false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[false,[0],[0],[squ]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[[b],false,[0],[squ]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[[b],[0],false,[squ]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[[b],[0],[0],false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[false,false,[0],[squ]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[false,false,false,[squ]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[false,false,false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[[b],false,false,[squ]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[[b],[0],false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[c,0,0, cir]]]])->[[b],false,false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[false,[0],[0],[cir]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[[c],false,[0],[cir]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[[c],[0],false,[cir]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[[c],[0],[0],false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[false,false,[0],[cir]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[false,false,false,[cir]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[false,false,false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[[c],false,false,[cir]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[[c],[0],false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[a, 0,0,cross]], [[b,0,0, squ]]]])->[[c],false,false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[false,[0],[0],[cross]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[[a],false,[0],[cross]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[[a],[0],false,[cross]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[[a],[0],[0],false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[false,false,false,[cross]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[false,false,[0],[cross]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[false,false,false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[[a],false,false,[cross]].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[[a],[0],false,false].
+r([[[[b,0,0,cross ]], [[c,0,0, squ]], [[a,0,0, cir]]],  [[[b, 0,0,squ]], [[c, 0,0, cir]]]])->[[a],false,false,false].

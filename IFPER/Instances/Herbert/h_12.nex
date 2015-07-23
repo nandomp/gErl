@@ -1,0 +1,8 @@
+h([a,n,p])->"b".
+h([a,n,p,a])->"n".
+h([a,n,p,a,o])->"p".
+h([a,n,p,a,o,q])->"b".
+h([a,n,p,a,o,q,a])->"o".
+h([a,n,p,a,o,q,a,p])->"q".
+h([a,n,p,a,o,q,a,p,r])->"b".
+h([a,n,p,a,o,q,a,p,r,a])->"p".

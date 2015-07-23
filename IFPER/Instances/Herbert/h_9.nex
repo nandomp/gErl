@@ -1,0 +1,6 @@
+h([q,t,u,r,t,u])->"r".
+h([q,t,u,r,t,u,s,t,u])->"s".
+h([q,t,u,r,t,u,s,t,u,t,t,u])->"t".
+h([q,t,u,r])->"u".
+h([q,t,u,r,t,u,s])->"u".
+h([q,t,u,r,t,u,s,t,u,t])->"u".

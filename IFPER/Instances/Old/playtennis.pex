@@ -1,0 +1,9 @@
+playtennis(overcast, hot, high, weak) -> yes.
+playtennis(rain, mild, high, weak) -> yes.
+playtennis(rain, cool, normal, weak) -> yes.
+playtennis(overcast, cool, normal, strong) -> yes.
+playtennis(sunny, cool, normal, weak) -> yes.
+playtennis(rain, mild, normal, weak) -> yes.
+playtennis(sunny, mild, normal, strong) -> yes.
+playtennis(overcast, mild, high, strong) -> yes.
+playtennis(overcast, hot, normal, weak) -> yes.

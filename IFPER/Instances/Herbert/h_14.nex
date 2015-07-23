@@ -1,0 +1,9 @@
+h([j,k,q,r])->"q".
+h([j,k,q,r,k])->"j".
+h([j,k,q,r,k,l])->"k".
+h([j,k,q,r,k,l,r])->"q".
+h([j,k,q,r,k,l,r,s])->"r".
+h([j,k,q,r,k,l,r,s,l])->"k".
+h([j,k,q,r,k,l,r,s,l,m])->"l".
+h([j,k,q,r,k,l,r,s,l,m,s])->"r".
+h([j,k,q,r,k,l,r,s,l,m,s,t])->"s".

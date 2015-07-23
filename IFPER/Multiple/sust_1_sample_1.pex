@@ -1,0 +1,10 @@
+sust([x,x,x])->[x,x,x].
+sust([m,a,c,n,y])->[m,a,c,n,y].
+sust([z,b])->[z,x].
+sust([g,x,b,g,x])->[g,x,x,g,x].
+sust([e,x,t,b,a])->[e,x,t,x,a].
+sust([k,b,b])->[k,x,x].
+sust([j])->[j].
+sust([b,a,n,t])->[x,a,n,t].
+sust([b,x,b])->[x,x,x].
+sust([a,b,c,d,e])->[a,x,c,d,e].

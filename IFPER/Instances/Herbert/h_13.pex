@@ -1,0 +1,9 @@
+h([w,x,a,x,y,b])->"y".
+h([w,x,a,x,y,b,y])->"z".
+h([w,x,a,x,y,b,y,z])->"c".
+h([w,x,a,x,y,b,y,z,c])->"z".
+h([w,x,a,x,y,b,y,z,c,z])->"a".
+h([w,x,a,x,y,b,y,z,c,z,a])->"d".
+h([w,x,a,x,y,b,y,z,c,z,a,d])->"a".
+h([w,x,a,x,y,b,y,z,c,z,a,d,a])->"b".
+h([w,x,a,x,y,b,y,z,c,z,a,d,a,b])->"e".

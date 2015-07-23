@@ -1,0 +1,16 @@
+listas([a,b,c,d])->[d,a].
+listas([a,b,c,d])->[d].
+listas([a,b,c,d])->[a,a].
+listas([a,b,c,d])->[d,d].
+listas([e,f,g,h,i])->[i,e].
+listas([e,f,g,h,i])->[i].
+listas([e,f,g,h,i])->[e,e].
+listas([e,f,g,h,i])->[i,i].
+listas([j,k,l,m,n,o])->[o,j].
+listas([j,k,l,m,n,o])->[o].
+listas([j,k,l,m,n,o])->[o,o].
+listas([j,k,l,m,n,o])->[j,j].
+listas([p,q,r])->[r,p].
+listas([p,q,r])->[r].
+listas([p,q,r])->[r,r].
+listas([p,q,r])->[p,p].

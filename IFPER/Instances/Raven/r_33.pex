@@ -1,0 +1,4 @@
+r([[[[a, 0,10,center],[b, 0,10,center]], [[a, 0,5,center],[b, 0,5,center]], [[a, 0,0,center],[b, 0,0,center]]],  [[[c, 0,10,center],[d, 0,10,center]], [[c, 0,5,center],[d, 0,5,center]]]])->[[c,d],[0,0],[0,0],[center,center]].
+r([[[[c, 0,10,center],[d, 0,10,center]], [[c, 0,5,center],[d, 0,5,center]], [[c, 0,0,center],[d, 0,0,center]]],  [[[a, 0,10,center],[b, 0,10,center]], [[a, 0,5,center],[b, 0,5,center]]]])->[[a,b],[0,0],[0,0],[center,center]].
+r([[[[a, 0,10,center],[b, 0,10,center]], [[c, 0,10,center],[d, 0,10,center]], [[e, 0,10,center],[f, 0,10,center]]],  [[[a, 0,5,center],[b, 0,5,center]], [[c, 0,5,center],[d, 0,5,center]]]])->[[e,f],[0,0],[5,5],[center,center]].
+r([[[[a, 0,5,center],[b, 0,5,center]], [[c, 0,5,center],[d, 0,5,center]], [[e, 0,5,center],[f, 0,5,center]]],  [[[a, 0,10,center],[b, 0,10,center]], [[c, 0,10,center],[d, 0,10,center]]]])->[[e,f],[0,0],[10,10],[center,center]].

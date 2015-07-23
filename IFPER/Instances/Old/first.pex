@@ -1,0 +1,4 @@
+first([a,b,c])->a.
+first([d,e,f])->d.
+first([g,h,i])->g.
+first([])->[].

@@ -1,0 +1,1634 @@
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     APPLY PREVIOUS POLICY    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+applyPolicy(VarGlob)->
+	applyPolicy2(VarGlob,ets:last(ets:lookup_element(VarGlob, tablaReglas, 2))).
+			
+
+applyPolicy2(_,0)->
+	ok;
+
+
+applyPolicy2(VarGlob, IndexRule)->
+	
+	applyPolicy3(VarGlob,IndexRule,ets:last(ets:lookup_element(VarGlob, policyPrevETS, 2))).
+
+
+applyPolicy3(VarGlob,IndexRule,0)->
+	applyPolicy2(VarGlob, IndexRule-1);
+	
+
+applyPolicy3(VarGlob, IndexRule, IndexPol )->
+	
+	
+	TablePrograms= ets:lookup_element(VarGlob, programs, 2),
+	TableRules = ets:lookup_element(VarGlob, tablaReglas, 2),
+	Policy = ets:lookup_element(VarGlob, policyPrevETS, 2),
+	TableOperators = ets:lookup_element(VarGlob, tableOperators	, 2),
+	OperatorsModule=ets:lookup_element(VarGlob, operatorsModule, 2),
+	NumPos = ets:lookup_element(VarGlob, numPos, 2),
+	NumNeg = ets:lookup_element(VarGlob, numNeg, 2),
+	WantProgs = ets:lookup_element(VarGlob, wantProgs, 2),
+	
+	
+	[{_,ListOps}]= ets:lookup(Policy, IndexPol),
+	[{KeyR,{SelecRule,_,_,_,_,_,_,_}}]= ets:lookup(ets:lookup_element(VarGlob, tablaReglas, 2), IndexRule),
+	
+	%io:format("ListOps: ~p ~n",[ListOps]),
+	%io:format("SelecRule: ~p ~n",[SelecRule]),
+	
+	[FinalRule]= lists:foldr(fun (Oper,[NewR])-> [{_,{NameOp,_,_,_}}]=ets:lookup(TableOperators, Oper),OpSelected=fun OperatorsModule:NameOp/1, OpSelected(NewR) end , [SelecRule], ListOps),
+	
+	%io:format("Final Rule: ~p ~n",[FinalRule]),
+	
+		
+	
+			
+	case util:already_exists(FinalRule,TableRules,ets:last(TableRules)+1) of
+					
+		false ->	
+			
+			{Cob,PosCob,CobNeg,NegCov}=util:cobertura_Funcional(VarGlob, FinalRule),
+			%io:format("Cob:  ~p, PosCob:  ~p, CobNeg: ~p, NegCob: ~p~n ",[Cob,PosCob,CobNeg,NegCov]),
+			NewKeyRule=ets:last(ets:lookup_element(VarGlob, tablaReglas, 2))+1,
+			%%% Optimalidad Reglas %%%
+					
+			OPtOpers = (length(ListOps)+1)/ets:lookup_element(VarGlob, numOperators, 2),
+			%OptRule=(0.4*(Cob/NumPos)-0.3*(CobNeg/NumNeg)-0.1*OPtOpers-0.2*(1/NumPos))/(0.4),
+			OptRule=(1*(Cob/NumPos)-0.4*(CobNeg/NumNeg)-0.2*OPtOpers-0.4*(1/NumPos)),
+			FoilGain=OptRule,
+			
+			%%% Insercion Reglas %%%
+			
+			[Ari,NumVars]=weka:count_variablesR(FinalRule),
+			SizeRule = testCovP:sizeOfRule(FinalRule),
+
+			ets:insert(ets:lookup_element(VarGlob, tablaReglas, 2), {NewKeyRule,{FinalRule,OptRule,ListOps,Cob,PosCob,CobNeg,NegCov,SizeRule}}),
+			ets:insert(ets:lookup_element(VarGlob, tablaReglasStep, 2), {NewKeyRule,0}),
+			
+			case OptRule > ets:lookup_element(VarGlob, bestRuleRatio, 2) of
+				
+				true ->
+						ets:update_element(VarGlob, bestRuleRatio, {2,OptRule});
+			
+				_Else ->
+						ok
+			end,
+			
+			case WantProgs of
+		
+					1 ->
+						
+							case (Cob =/= 0) of
+				
+								true ->
+					
+									programs:newrule2programs(NewKeyRule,Cob,PosCob,CobNeg,NegCov,ListOps,VarGlob),
+									programs:add2Matrix(VarGlob),
+
+					
+									{IsBestProg,IdProgA,P1a,P2a,NewUnions,OptAdd}=programs:addition_withMatrix(VarGlob),
+									ets:update_element(VarGlob, listUnions, {2,NewUnions}),
+								
+									case IsBestProg of
+					
+										false ->
+												programs:add2Matrix(VarGlob);
+						
+										true ->
+												ok
+									end,
+					
+					
+									{IsBestProg1,IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(VarGlob),
+									ets:update_element(VarGlob, listUnions, {2,NewUnions2}),
+									case OptUni == -100 of 
+										
+										true -> 
+												ok;
+										
+										false ->
+												case IsBestProg1 of
+														false ->
+															programs:add2Matrix(VarGlob);
+														true ->
+															ok
+												end
+									end;
+				
+				
+								false ->
+	
+									{IsBestProg2,IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(VarGlob),
+									ets:update_element(VarGlob, listUnions, {2,NewUnions2}),
+					
+									case OptUni == -100 of 
+										true -> 
+											ok;
+										false ->
+											case IsBestProg2 of
+												false ->
+													programs:add2Matrix(VarGlob);
+												true ->
+													ok
+											end
+					
+									end
+					
+						end;
+						
+						%GlobalOptNew=programs:global_optimality(ets:lookup_element(VarGlob, programs, 2)),
+						%GlobalOptRules=programs:global_optimalityRules(ets:lookup_element(VarGlob, tablaReglas, 2)),
+			
+						%NewListsOptGlobal=ets:lookup_element(VarGlob, listOptGlobal, 2)++[GlobalOptNew],
+						%ets:update_element(VarGlob, listOptGlobal, {2,NewListsOptGlobal}),
+			
+						%MedRules=programs:mediumSizeRules(ets:lookup_element(VarGlob, tablaReglas, 2)),
+						%MedPrograms=programs:mediumSizePrograms(ets:lookup_element(VarGlob, programs, 2)),
+						%%{Q,A,R,ClassMax}=reinforcement:calcularQ(VarGlob,FoilGain,GlobalOptNew,MedRules,MedPrograms,NumPos),
+			
+						%{Prev1,Prev2,Prev3}=weka:givemePrevOps(lists:delete(lists:nth(1,ListOps),ListOps)),
+						%weka:new("DataArff.txt",ets:lookup_element(VarGlob, globalOptPrograms,2),MedRules,MedPrograms,ets:lookup_element(VarGlob, bestRuleRatio, 2),ets:lookup_element(VarGlob, bestProgramRatio, 2),KeyR,SizeRule,Ari,lists:nth(1, ListOps),Prev1,Prev2,Prev3,Cob/NumPos,1),
+			
+						%case ets:last(ets:lookup_element(VarGlob, policyWEKA, 2)) of 
+						%	'$end_of_table' ->
+						%			ets:insert(ets:lookup_element(VarGlob, policyWEKA, 2), {1,{ets:lookup_element(VarGlob, globalOptRules,2),ets:lookup_element(VarGlob, globalOptPrograms,2),MedRules,MedPrograms,ets:lookup_element(VarGlob, bestRuleRatio, 2),ets:lookup_element(VarGlob, bestProgramRatio, 2),KeyR,SizeRule,Ari,lists:nth(1, ListOps),Prev1,Prev2,Prev3,Cob/NumPos,1}});
+						%	_ ->
+						%			ets:insert(ets:lookup_element(VarGlob, policyWEKA, 2), {ets:last(ets:lookup_element(VarGlob, policyWEKA, 2))+1,{ets:lookup_element(VarGlob, globalOptRules,2),ets:lookup_element(VarGlob, globalOptPrograms,2),MedRules,MedPrograms,ets:lookup_element(VarGlob, bestRuleRatio, 2),ets:lookup_element(VarGlob, bestProgramRatio, 2),KeyR,SizeRule,Ari,lists:nth(1, ListOps),Prev1,Prev2,Prev3,Cob/NumPos,1}})
+						%end;
+					
+					
+					0 ->
+					
+						%GlobalOptNew=programs:global_optimality(ets:lookup_element(VarGlob, programs, 2)),
+						%GlobalOptRules=programs:global_optimalityRules(ets:lookup_element(VarGlob, tablaReglas, 2)),
+			
+						%NewListsOptGlobal=ets:lookup_element(VarGlob, listOptGlobal, 2)++[GlobalOptNew],
+						%ets:update_element(VarGlob, listOptGlobal, {2,NewListsOptGlobal}),
+			
+						%MedRules=programs:mediumSizeRules(ets:lookup_element(VarGlob, tablaReglas, 2)),
+						%MedPrograms=programs:mediumSizePrograms(ets:lookup_element(VarGlob, programs, 2)),
+						%%{Q,A,R,ClassMax}=reinforcement:calcularQ(VarGlob,FoilGain,GlobalOptNew,MedRules,MedPrograms,NumPos),
+			
+						%{Prev1,Prev2,Prev3}=weka:givemePrevOps(lists:delete(lists:nth(1,ListOps),ListOps)),
+						%weka:new("DataArff.txt",ets:lookup_element(VarGlob, globalOptRules,2),MedRules,MedPrograms,ets:lookup_element(VarGlob, bestRuleRatio, 2),ets:lookup_element(VarGlob, bestProgramRatio, 2),KeyR,SizeRule,Ari,lists:nth(1, ListOps),Prev1,Prev2,Prev3,Cob/NumPos,1),
+			
+						%case ets:last(ets:lookup_element(VarGlob, policyWEKA, 2)) of 
+						%	'$end_of_table' ->
+						%			ets:insert(ets:lookup_element(VarGlob, policyWEKA, 2), {1,{ets:lookup_element(VarGlob, globalOptRules,2),ets:lookup_element(VarGlob, globalOptPrograms,2),MedRules,MedPrograms,ets:lookup_element(VarGlob, bestRuleRatio, 2),ets:lookup_element(VarGlob, bestProgramRatio, 2),KeyR,SizeRule,Ari,lists:nth(1, ListOps),Prev1,Prev2,Prev3,Cob/NumPos,1}});
+						%	_ ->
+						%			ets:insert(ets:lookup_element(VarGlob, policyWEKA, 2), {ets:last(ets:lookup_element(VarGlob, policyWEKA, 2))+1,{ets:lookup_element(VarGlob, globalOptRules,2),ets:lookup_element(VarGlob, globalOptPrograms,2),MedRules,MedPrograms,ets:lookup_element(VarGlob, bestRuleRatio, 2),ets:lookup_element(VarGlob, bestProgramRatio, 2),KeyR,SizeRule,Ari,lists:nth(1, ListOps),Prev1,Prev2,Prev3,Cob/NumPos,1}})
+						%end
+						ok
+
+	
+			end;
+		
+		true ->
+			
+			ok
+	end,
+	
+	
+	
+	applyPolicy3(VarGlob, IndexRule, IndexPol-1).
+
+	
+
+
+
+
+
+
+
+			
+	
+
+
+for(N, Fun) when is_integer(N), is_function(Fun, 1) ->
+    for({N, 0}, Fun);
+
+for({N, _}, _) when is_integer(N), N < 1 ->
+    ok;
+
+for({N, LoopCount}, Fun) when is_integer(N), is_function(Fun, 1) ->
+    Fun(LoopCount),
+    for({N-1, LoopCount+1}, Fun).
+
+
+
+compareTerms(Texto,Patron)->
+	Cabeza1=string:sub_word(Texto,1,$(),
+	Cabeza2=string:sub_word(Patron,1,$(),
+	case string:equal(Cabeza1,Cabeza2) of
+		true ->
+		Texto1=string:sub_word(Texto,2,$(),
+		Texto2=string:sub_word(Texto1,1,$)),
+		Texto3=re:replace(Texto2, " ", "",[global,{return,list}]),
+		Patron1=string:sub_word(Patron,2,$(),
+		Patron2=string:sub_word(Patron1,1,$)),
+		Patron3=re:replace(Patron2, " ", "",[global,{return,list}]),
+		%io:format("Texto= ~p~n",[Texto3]),
+		%io:format("Patron= ~p~n",[Patron3]),
+		{ok,T,_}=erl_scan:string(Texto3),
+		{ok,P,_}=erl_scan:string(Patron3),
+		case length(T)==length(P) of 
+			true -> 
+				compare(T,P,length(T));
+			false ->
+				false		
+		end;
+		
+		false ->
+				false
+	end.
+	
+
+compare(_,_,0) ->
+		true;
+
+compare(A,B,N) when is_integer(N) ->
+	
+	%ElemA = lists:nth(N,A),
+	%ElemB = lists:nth(N,B),
+	%io:format("termino ~p : ~p~n",[N,ElemA]),
+	%io:format("termino ~p : ~p~n",[N,ElemB]),
+	case lists:nth(N,A) of
+		{atom,1,X} -> 
+		%	io:format("A es atomo~n"),
+			case lists:nth(N,B) of 
+				{atom,1,Y} ->
+					
+				%	io:format("B es atomo~n"),
+					case X==Y of
+						true ->
+						%	io:format("X == Y~n"),
+							compare(A,B,N-1);
+						false -> 
+						%	io:format("X =/= Y~n"),
+							false 
+					end;
+				
+				{var,1,_} ->
+					
+					%io:format("B no es atomo,es una variable~n"),
+					compare(A,B,N-1);
+				_else ->
+				  	compare(A,B,N-1)						
+			end;
+		
+		{var,1,_} ->
+			compare(A,B,N-1);
+		
+		_else ->
+			compare(A,B,N-1)		
+				
+	end.
+	
+	
+	
+	
+	
+	
+	eliminarcomas(Regla,0)->
+	Regla;
+  
+eliminarcomas(Regla,Index)->
+	case lists:nth(Index,Regla) of
+		{',',1} ->
+			ReglaNueva=lists:delete({',',1},Regla),
+			eliminarcomas(ReglaNueva,Index-1);
+		_else ->
+			eliminarcomas(Regla,Index-1)
+	end.
+			
+
+aridad(Regla,Ini,Parentesis,Aridad,Index)->
+	%io:format("Index: ~p~n",[Index]),
+	%io:format("length: ~p~n",[length(Regla)]),
+	%io:format("parentesis: ~p~n",[Parentesis]),
+	case Index == (length(Regla)+1) of
+		false ->
+			%io:format("nth: ~p~n",[lists:nth(Index,Regla)]),
+			case lists:nth(Index,Regla) of
+				{')',_} ->
+					%io:format("parentesis ) ~n",[]),
+					case Parentesis==0 of
+						true ->
+							%io:format("Devuelvo aridad ~p~n",[Aridad]),
+							{Index,Aridad};
+						false ->
+							aridad(Regla,Ini,Parentesis-1,Aridad,Index+1)
+					end;
+		
+				{'(',_} ->
+						%io:format("parentesis (  ~n",[]),
+						{LastIndex,_}=aridad(Regla,Index+1,0,0,Index+1),
+						%io:format("OtraAridad:  ~w~n",[OtraAridad]),
+						aridad(Regla,Ini,Parentesis+1,Aridad,LastIndex);
+		
+				_else -> 
+						%io:format("Otro ~n",[]),
+						aridad(Regla,Ini,Parentesis,Aridad+1,Index+1)
+			end;
+		true ->
+			errrrrorrrr
+	end.
+		
+				
+atributos(Regla,Ini,Parentesis,Atributos,AtribParcial,Index)->
+	
+	
+	case Index == (length(Regla)+1) of
+		false ->
+			%io:format("nth: ~p~n",[lists:nth(Index,Regla)]),
+			case lists:nth(Index,Regla) of
+				{')',_} ->
+					%io:format("parentesis ) ~n",[]),
+					case Parentesis==1 of
+						true ->
+							Atrib=lists:append(Atributos,AtribParcial),
+							%io:format("Devuelvo atributos ~p~n",[Atrib]),
+							{Index,Atrib};
+						false ->
+							Atrib=lists:append(Atributos,AtribParcial),
+							%io:format("Atrib: ~w~n",[Atrib]),
+							atributos(Regla,Ini,Parentesis-1,Atrib,[],Index+1)
+					end;
+				
+				
+				{var,_,Var} ->
+					%io:format("variable ~n",[]),
+						
+						AtribP=lists:append(AtribParcial,[{var,Var}]),
+						%io:format("AtribP: ~w~n",[AtribP]),
+						atributos(Regla,Ini,Parentesis,Atributos,AtribP,Index+1);
+									
+		
+				{atom,_,Atom} ->
+					
+					case lists:nth(Index+1,Regla) of 
+						
+				  		{'(',_} ->
+							%io:format("parentesis (  ~n",[]),
+							{_,Arid}=aridad(Regla,Index+2,0,0,Index+2),
+							{LastIndex,AtribFun}=atributos(Regla,Index+1,1,[],[],Index+1),
+							AtribFun2=[{func,Arid,Atom,AtribFun}],
+							%io:format("Atribfun: ~w~n",[AtribFun2]),
+							AtribPar=lists:append(AtribParcial,AtribFun2),
+							%io:format("AtribPar: ~w~n",[AtribPar]),
+							atributos(Regla,Ini,Parentesis+1,Atributos,AtribPar,LastIndex);
+			
+		
+						_else -> 
+							%io:format("Otro ~n",[]),
+							AtribP=lists:append(AtribParcial,[{atom,Atom}]),
+							%io:format("AtribP: ~w~n",[AtribP]),
+							atributos(Regla,Ini,Parentesis,Atributos,AtribP,Index+1)
+					end;
+			
+				_else ->
+							atributos(Regla,Ini,Parentesis,Atributos,AtribParcial,Index+1)
+
+
+			end;
+		true ->
+			{errorrrr,errrorrrrrrr}
+	end.
+
+
+
+coberturaFunc(A,B)->
+	
+	FuncA=element(3,A),
+	FuncB=element(3,B),
+	AridadA=element(2,A),
+	AridadB=element(2,B),
+	
+	case (FuncA==FuncB) and (AridadA==AridadB) of
+		true ->
+			ArgsA=element(4,A),
+			ArgsB=element(4,B),
+			coberturaArgs(ArgsA,ArgsB,AridadA,1);	
+	
+		false ->
+			false
+	end.
+	
+	
+
+
+coberturaArgs(ArgsA,ArgsB,Aridad,Index)->
+	case Index == (Aridad +1) of
+		false->
+			%io:format("ArgsA: ~w~n",[ArgsA]),
+			%io:format("elemento: ~w~n",[lists:nth(Index,ArgsA)]),
+			case lists:nth(Index,ArgsA) of	
+				{atom,AtomA}->
+					
+					case lists:nth(Index,ArgsB) of	
+						{atom,AtomB} -> 
+							case AtomA==AtomB of
+								true->
+									coberturaArgs(ArgsA,ArgsB,Aridad,Index+1);
+								false ->
+									false					
+							end;
+						{var,_} ->
+								coberturaArgs(ArgsA,ArgsB,Aridad,Index+1);
+						_else ->
+								false
+					end;
+				{var,_}->
+					case lists:nth(Index,ArgsB) of	
+						{atom,_} -> 
+							coberturaArgs(ArgsA,ArgsB,Aridad,Index+1);
+						{var,_} ->
+							coberturaArgs(ArgsA,ArgsB,Aridad,Index+1);
+						{func,_,_,_} ->
+							coberturaArgs(ArgsA,ArgsB,Aridad,Index+1);
+						_else ->
+							false
+					end;
+				{func,_,_,_} ->
+					case lists:nth(Index,ArgsB) of
+						{func,_,_,_} ->
+							coberturaFunc(lists:nth(Index,ArgsA),lists:nth(Index,ArgsB));
+						{var,_}->
+							coberturaArgs(ArgsA,ArgsB,Aridad,Index+1);
+						_else ->
+							false
+					end
+			end;
+		true->
+			true
+	end.
+
+%% Regla 1 debe ser MAS GENERAL que regla 2 %%
+cobertura(Regla1,Regla2)->
+	{ok,Terms1,_}=erl_scan:string(Regla1),
+	{ok,Terms2,_}=erl_scan:string(Regla2),
+	ReglaLimpia1=eliminarcomas(Terms1,length(Terms1)),
+	ReglaLimpia2=eliminarcomas(Terms2,length(Terms2)),
+	io:format("Regla 1 ~w~n",[ReglaLimpia1]),
+	io:format("Regla 2 ~w~n",[ReglaLimpia2]),
+	io:format("Aridad1 ~w~n",[aridad(ReglaLimpia1,3,0,0,3)]),
+	io:format("Aridad2 ~w~n",[aridad(ReglaLimpia2,3,0,0,3)]),
+	
+	%% La funcion Atributos devuelve tupla {lenght,atributos}
+	R1=element(2,atributos(ReglaLimpia1,1,0,[],[],1)),
+	R2=element(2,atributos(ReglaLimpia2,1,0,[],[],1)),
+	io:format("R1:  ~w~n",[R1]),
+	io:format("R2:  ~w~n",[R2]),
+
+	Cabeza1=lists:nth(1,R1),
+	Cabeza2=lists:nth(1,R2),
+	io:format("Cabeza1 ~w~n",[Cabeza1]),
+	io:format("Cabeza2 ~w~n",[Cabeza2]),
+	coberturaFunc(Cabeza1,Cabeza2).
+
+
+
+%%% Tablas con reglas ground	
+cobertura(TabPos,TabNeg,Regla)->
+	{ok,Terms1,_}=erl_scan:string(Regla),
+	ReglaLimpia1=eliminarcomas(Terms1,length(Terms1)),
+	R1=element(2,atributos(ReglaLimpia1,1,0,[],[],1)),
+	Cabeza1=lists:nth(1,R1),
+	case coberturaNeg(TabNeg,Cabeza1,ets:last(TabNeg)+1) of
+		true->
+			0;	
+			
+		false ->
+			coberturaPos(TabPos,Cabeza1,0,ets:last(TabPos)+1)
+			
+	end.
+
+
+coberturaNeg(_,_,0)->
+	false;
+	
+coberturaNeg(TabNeg,CabezaRegla,Index)->
+	case Prev = ets:prev( TabNeg, Index ) of 
+		'$end_of_table' -> 
+			false;
+		_else ->			
+			%io:format( " prev ~w ~n ", [ Prev ]),
+			%io:format("~p~n",[ets:match( TabNeg,  {Prev,'$1'})]),
+			Match=ets:match( TabNeg,  {Prev,'$1'}),
+			{ReglaNeg,_}=lists:nth(1,lists:nth(1,Match)),
+			
+			{ok,Terms1,_}=erl_scan:string(ReglaNeg),
+			ReglaLimpia1=eliminarcomas(Terms1,length(Terms1)),
+			R1=element(2,atributos(ReglaLimpia1,1,0,[],[],1)),
+			CabezaNeg=lists:nth(1,R1),
+			
+			%io:format("Match: ~p~n",[Match]),
+			%io:format("Rule: ~p~n",[ReglaNeg]),
+			%io:format("Rew: ~p~n",[Rew]),
+			case coberturaFunc(CabezaRegla,CabezaNeg) of
+				true->
+					%io:format("~p cubre ejemplo negativo ~p~n",[CabezaRegla,CabezaNeg]),
+					true;
+				false ->
+					%io:format("~p no cubre ejemplo negativo ~p~n",[CabezaRegla,CabezaNeg]),
+					coberturaNeg(TabNeg,CabezaRegla,Index-1)
+			end
+	end.
+	
+	
+coberturaPos(_,_,Cob,0)->
+	Cob;
+	
+coberturaPos(TabPos,CabezaRegla,Cob,Index)->
+	case Prev = ets:prev( TabPos, Index ) of 
+		'$end_of_table' -> 
+			Cob;
+		_else ->
+			%io:format( " prev ~w ~n ", [ Prev ]),
+			%io:format("~p~n",[ets:match( TabPos,  {Prev,'$1'})]),
+			Match=ets:match( TabPos,  {Prev,'$1'}),
+			{ReglaPos,_}=lists:nth(1,lists:nth(1,Match)),	
+			
+			{ok,Terms1,_}=erl_scan:string(ReglaPos),
+			ReglaLimpia1=eliminarcomas(Terms1,length(Terms1)),
+			R1=element(2,atributos(ReglaLimpia1,1,0,[],[],1)),
+			CabezaPos=lists:nth(1,R1),
+			
+			%io:format("Match: ~p~n",[Match]),
+			%io:format("Rule: ~p~n",[ReglaNeg]),
+			%io:format("Rew: ~p~n",[Rew]),
+			case coberturaFunc(CabezaRegla,CabezaPos) of
+				true->
+					%io:format("~p cubre ejemplo positivo ~p~n",[CabezaRegla,CabezaPos]),
+					NewCob=Cob+1,
+					NewIndex=Index-1,
+					coberturaPos(TabPos,CabezaPos,NewCob,NewIndex);
+			
+				false ->
+					%io:format("~p no cubre ejemplo positivo ~p~n",[CabezaRegla,CabezaPos]),
+					coberturaPos(TabPos,CabezaRegla,Cob,Index-1)
+			end
+		end.
+		
+		
+		
+		
+		%atom2var1(_,Nuevo,_,0)->
+%	Nuevo;
+
+%atom2var1(Cuerpo,Nuevo,Pos,Pos)->
+%	N=trunc(Pos/2),
+%	Nuevo2=string:concat([65+N],Nuevo),
+%	atom2var1(Cuerpo,Nuevo2,Pos,Pos-1);
+
+%atom2var1(Cuerpo,Nuevo,Pos,Index)->	
+%	case [lists:nth(Index,Cuerpo)] of
+%		"," ->
+%			io:format("Posicion ~p : ~s ~n",[index,[lists:nth(Index,Cuerpo)]]),
+%			Nuevo2=string:concat(",",Nuevo),
+%			io:format("~s ~n",[Nuevo2]),
+%			atom2var1(Cuerpo,Nuevo2,Pos,Index-1);
+%			
+%		_else ->
+%			io:format("Posicion ~p : ~s ~n",[index,[lists:nth(Index,Cuerpo)]]),
+%			Nuevo3=string:concat([lists:nth(Index,Cuerpo)],Nuevo),
+%			io:format("~s ~n",[Nuevo3]),
+%			atom2var1(Cuerpo,Nuevo3,Pos,Index-1)
+%	end.
+
+
+
+
+
+
+
+union_programs(Programs,CardPos,Used)->
+		
+	NewUsed=union_programs(Programs,CardPos,Used,1,1,ets:last(Programs)),
+	NewUsed.
+
+union_programs(Programs,CardPos,Used,P1,P2,End) when P1==P2->
+	union_programs(Programs,CardPos,Used,P1,P2+1,End);
+
+
+union_programs(Programs,CardPos,Used,P1,P2,End) when P1=/=P2->	
+	
+	
+	case lists:keyfind(P2,2,[lists:keyfind(P1,1,Used)]) of
+		
+		false ->
+			case P1 == End+1 of
+				false ->
+					case P2 ==End+1 of
+						false ->
+							[{_,{Rules1,PosCov1,Opt1}}]=ets:lookup(Programs, P1),
+		 					[{_,{Rules2,PosCov2,Opt2}}]=ets:lookup(Programs, P2),
+  					
+							case Opt1>0 of
+								true->						
+							
+									case Opt2>0 of 
+										true ->
+											RulesNew=sets:to_list(sets:union(sets:from_list(Rules1), sets:from_list(Rules2))),
+											PosCovNew=sets:to_list(sets:union(sets:from_list(PosCov1), sets:from_list(PosCov2))),	
+  											OptNew=length(PosCovNew)/CardPos,
+											
+											case ets:match(Programs,{$1,{[$2],PosCovNew,$3}}) of
+												[] ->
+													ets:insert(Programs, {ets:last(Programs)+1,{RulesNew,PosCovNew,OptNew}}),
+													NewUsed=[{P1,P2}|Used],	
+													%io:format("Nuevo Programa: ~w ~w ~n",[P1,P2]),
+													union_programs(Programs,CardPos,NewUsed,P1,P2+1,End);	
+												_Else ->
+													union_programs(Programs,CardPos,Used,P1,P2+1,End)
+											end;
+										
+										false ->
+											union_programs(Programs,CardPos,Used,P1+1,1,End)
+									end;
+									
+  								false ->
+									union_programs(Programs,CardPos,Used,P1,P2+1,End)
+  							end;
+				
+						true ->
+							union_programs(Programs,CardPos,Used,P1+1,1,End)
+					end;
+		
+				true ->
+					Used
+			end;
+	
+		_Else ->
+			union_programs(Programs,CardPos,Used,P1,P2+1,End)
+	end.
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		start(InstanciasP, InstanciasN, TablaReglas,Actions,Hasta,KeyRule,LoopSelecRules)->
+	Dis=0.9,
+	case Hasta>0 of
+		true->
+			case util:selectRule(TablaReglas, KeyRule,LoopSelecRules) of 
+		
+				{Loop,[{Key,{SelecRule,_,PrevActs}}]}->
+					%io:format("Regla Seleccionada: ~w sobre ~w: Loop: ~w~n",[Key,ets:last(TablaReglas),Loop]),
+					NumPos=ets:last(InstanciasP),
+					{Act,CobAnt,Veces}=util:maxReward(Actions, 0, 0, ets:last(Actions)+1,0,1),
+					%io:format("-----------------------------------------------~n"),
+					%io:format("Action selected: ~p~n",[Act]),
+					%io:format("Rule Selected: ~p~n",[Key]),
+					
+					Newrule=actions:atom2var(SelecRule, Act),
+					case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+						false ->
+							{Cob,_}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+							ets:insert(TablaReglas, {ets:last(TablaReglas)+1,{Newrule,Cob/NumPos,[Act|PrevActs]}}),
+							%io:format("Cob: ~w~n",[Cob]),
+							%io:format("NumPos: ~w~n",[NumPos]),
+							%io:format("Regla: ~p~n",[Newrule]),
+							case Veces == 1 of
+								true ->
+									NewCob= Cob/NumPos;
+								false ->
+									NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+							end,
+							NomAct=lists:append("atom2var_",Act),
+							case PrevActs of 
+								[] -> 									
+									ets:update_element(Actions, Act, {2,{NomAct,NewCob,Veces+1}});
+								_else ->
+									reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+									ets:update_element(Actions, Act, {2,{NomAct,NewCob,Veces+1}})
+							end,
+							start(InstanciasP, InstanciasN, TablaReglas,Actions,Hasta-1,Key,Loop);			
+						true ->
+							start(InstanciasP, InstanciasN, TablaReglas,Actions,Hasta-1,Key,Loop)
+					end;		
+					
+				false ->
+					io:format("SelectedRule2 falla ~n"),
+					true
+			end;
+		false->
+			bucleTerminado
+	end.
+
+start2(InstanciasP, InstanciasN, TablaReglas,Programs,Actions,Unions,Hasta) ->
+
+	
+	case Hasta>0 of
+		true->
+			Dis=0.9,
+			%[BestAct,BestRule,_]=reinforcement:betterAction(Actions,TablaReglas),
+			{BestAct,BestRule}=reinforcement:randomAction(ets:last(Actions), ets:last(TablaReglas)),
+			%io:format("Act Seleccionada: ~w~n ",[BestAct]),
+			%io:format("Rule Seleccionada: ~w~n ",[BestRule]),
+			%io:format("look Regla: ~p~n ",[ets:lookup(TablaReglas, BestRule)]),
+			%io:format("look Act: ~p~n ",[ets:lookup(Actions, BestAct)]),
+			[{_,{SelecRule,_,PrevActs}}]=ets:lookup(TablaReglas, BestRule),
+			[{KeyA,{_,CobAnt,Veces}}]=ets:lookup(Actions, BestAct),
+			
+			NumPos=ets:last(InstanciasP),
+			
+			Newrule=actions:atom2var(SelecRule, KeyA),
+			
+			
+			%io:format("NewRule: ~p~n ",[Newrule]),
+			case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+					false ->
+							{Cob,PosCob}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+							NewKeyRule=ets:last(TablaReglas)+1,
+							ets:insert(TablaReglas, {NewKeyRule,{Newrule,Cob/NumPos,[KeyA|PrevActs]}}),
+							
+							
+							
+							%io:format("Cob: ~w~n",[Cob]),
+							%io:format("NumPos: ~w~n",[NumPos]),
+							%io:format("Regla: ~p~n",[Newrule]),
+							case Veces == 1 of
+								true ->
+									NewCob= Cob/NumPos;
+								false ->
+									NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+							end,
+							NomAct=lists:append("atom2var_",KeyA),
+							case PrevActs of 
+								[] -> 									
+									ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}});
+								_else ->
+									reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+									ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}})
+							end,
+							%%%
+							%[Ari,NumVars]=weka:count_variablesR(Newrule),
+							%Opt=NewCob+Cob/NumPos,
+							%io:format("Weka: ~p ~p ~p ~p ~p ~p ~n",[1,KeyR,NumVars,Ari,KeyA,Opt]),
+							%weka:new("DataArff.txt",1.0,KeyR,NumVars,Ari,KeyA,Opt),								
+							%%%
+							case PosCob =/=0 of
+								true ->
+									programs:newrule2programs(NewKeyRule,Cob/NumPos,PosCob,Programs);
+								false ->
+									noinsertoprogramasconopt0
+							end,
+							
+							%io:format("~p~n",[ets:match(Programs,'$1')]),
+							
+							%NewUnions=programs:union_programs(Programs,NumPos,Unions),
+							NewUnions=programs:union_programs_selectBest(Programs,NumPos,Unions),
+							start2(InstanciasP, InstanciasN, TablaReglas,Programs,Actions,NewUnions,Hasta-1);			
+					true ->
+							start2(InstanciasP, InstanciasN, TablaReglas,Programs,Actions,Unions,Hasta-1)
+			end;
+		
+		false->
+			error
+end.
+
+start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,Unions,50) ->
+			
+			io:format("-------------STEP: ~w-------------~n",[50]),		
+	
+			Dis=0.9,
+			NumPos=ets:last(InstanciasP),
+			%% Generación del modelo %%
+			weka:gen_arff("Actions.arff","Actions",Actions,TablaReglas),
+			clientWeka:client_DM_Gen(),
+			GlobalOpt=programs:global_optimality(Programs),
+			io:format("GlobalOpt a Weka: ~w~n",[GlobalOpt]),
+				
+			
+			%% Selección de la mejor acción a partir del modelo %%
+			{_,BestAct,BestRule}=weka:best_action(Actions,TablaReglas,GlobalOpt,1,1,0,0,0),
+			
+			io:format("Action: (~w,~w)~n ",[BestRule,BestAct]),
+			
+			[{_,{SelecRule,_,PrevActs}}]=ets:lookup(TablaReglas, BestRule),
+			[{KeyA,{_,CobAnt,Veces}}]=ets:lookup(Actions, BestAct),
+			Newrule=actions:atom2var(SelecRule, KeyA),
+			
+			io:format("-----------------------------------------------~n",[]),	
+			case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+					
+					false ->
+							
+						{Cob,PosCob}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+						NewKeyRule=ets:last(TablaReglas)+1,
+						ets:insert(TablaReglas, {NewKeyRule,{Newrule,Cob/NumPos,[KeyA|PrevActs]}}),
+						
+						%% Calculo de la "optimalidad" de la accion escogida %%
+						case Veces == 1 of
+								true ->
+									NewCob= Cob/NumPos;
+								false ->
+									NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+						end,
+
+						NomAct=lists:append("atom2var_",integer_to_list(KeyA)),
+						
+						%% Refuerzo de las acciones anteriores %%
+						case PrevActs of 
+								[] -> 									
+									ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}});
+								_else ->
+									reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+									ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}})
+						end,
+						
+						%% Generacion de programas (1º Regla unitaria nueva -> programa unitario (Cob>0); 2º Combiancion de programas %%
+							case PosCob =/=0 of
+								true ->
+									io:format("Inserto Regla como programa unitario: ~w~n -> ",[NewKeyRule]),
+									programs:newrule2programs(NewKeyRule,Cob/NumPos,PosCob,Programs),
+									io:format("Add Regla/Programa c: ~w~n -> ",[ets:last(Programs)]),
+									NewUnions=programs:addition(ets:last(Programs),Unions,NumPos,Programs),
+									io:format("Voy a UNION -> ~n",[]),	
+									NewUnions2=programs:union_programs_selectBest(Programs,NumPos,NewUnions);
+								false ->
+									io:format("Voy a UNION -> ~n",[]),	
+									NewUnions2=programs:union_programs_selectBest(Programs,NumPos,Unions)
+						
+
+					end,
+						
+											
+												
+						%% Fin Step%%
+						start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,NewUnions2,49);	
+				
+				
+					true ->
+						io:format("Nueva Regla ya existente en ETS reglas~n ",[]),
+						NewUnions2=programs:union_programs_selectBest(Programs,NumPos,Unions),
+						start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,NewUnions2,49)
+			end;
+
+
+start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,Unions,Hasta) when Hasta>50->
+	
+			io:format("-------------STEP: ~w-------------~n",[Hasta]),	
+			Dis=0.9,
+			NumPos=ets:last(InstanciasP),
+			
+			%% Seleccion de la mejor Accion de manera aleatoria %%
+			{BestAct,BestRule}=reinforcement:randomAction(ets:last(Actions), ets:last(TablaReglas)),
+			io:format("Action: (~w,~w)~n ",[BestRule,BestAct]),
+			GlobalOpt=programs:global_optimality(Programs),
+			io:format("GlobalOpt NO Weka: ~w~n",[GlobalOpt]),
+			%io:format("Act Seleccionada: ~w~n ",[BestAct]),
+			%io:format("Rule Seleccionada: ~w~n ",[BestRule]),
+			%io:format("look Regla: ~p~n ",[ets:lookup(TablaReglas, BestRule)]),
+			%io:format("look Act: ~p~n ",[ets:lookup(Actions, BestAct)]),
+			
+			[{KeyR,{SelecRule,_,PrevActs}}]=ets:lookup(TablaReglas, BestRule),
+			[{KeyA,{_,CobAnt,Veces}}]=ets:lookup(Actions, BestAct),
+			Newrule=actions:atom2var(SelecRule, KeyA),
+			%io:format("NewRule: ~p~n ",[Newrule]),
+			
+			case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+					
+				false ->
+							
+					{Cob,PosCob}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),							
+					NewKeyRule=ets:last(TablaReglas)+1,
+					ets:insert(TablaReglas, {NewKeyRule,{Newrule,Cob/NumPos,[KeyA|PrevActs]}}),
+					
+					%% Calculo de la "optimalidad" de la accion escogida %%
+					case Veces == 1 of							
+						true ->							
+							NewCob= Cob/NumPos;						
+						false ->
+							NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+					end,
+							
+					NomAct=lists:append("atom2var_",integer_to_list(KeyA)),
+					
+					%% Refuerzo de las acciones anteriores %%		
+					case PrevActs of 
+							[] -> 									
+								ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}});
+							_else ->
+								reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+								ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}})
+					end,
+					
+					% Optimalidad global del conjunto de programas antes de agregar el nuevo %
+					GlobalOpt=programs:global_optimality(Programs),
+					
+					%% Generacion de programas (1º Regla unitaria nueva -> programa unitario (Cob>0); 2º Combiancion de programas %%
+					case PosCob =/=0 of
+								true ->
+									io:format("Inserto Regla como programa unitario: ~w~n -> ",[NewKeyRule]),
+									programs:newrule2programs(NewKeyRule,Cob/NumPos,PosCob,Programs),
+									io:format("Add Regla/Programa c: ~w~n -> ",[ets:last(Programs)]),
+									NewUnions=programs:addition(ets:last(Programs),Unions,NumPos,Programs),
+									io:format("Voy a UNION -> ~n",[]),	
+									NewUnions2=programs:union_programs_selectBest(Programs,NumPos,NewUnions);
+								false ->
+									io:format("Voy a UNION -> ~n",[]),	
+									NewUnions2=programs:union_programs_selectBest(Programs,NumPos,Unions)
+						
+
+					end,
+						
+
+					%% Generacion fichero .arff para Weka %%
+					[Ari,NumVars]=weka:count_variablesR(Newrule),
+					%%%%%%%%%%%%%%%%Opt=NewCob+Cob/NumPos,
+					%io:format("Weka: ~p ~p ~p ~p ~p ~p ~n",[1,KeyR,NumVars,Ari,KeyA,Opt]),
+					GlobalOptNew=programs:global_optimality(Programs),
+					
+					weka:new("DataArff.txt",GlobalOpt,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt),
+				
+					%% Fin Step%%		
+					start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,NewUnions2,Hasta-1);	
+				
+				true ->
+					io:format("Nueva Regla ya existente en ETS reglas ~n",[]),
+					NewUnions2=programs:union_programs_selectBest(Programs,NumPos,Unions),
+					start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,NewUnions2,Hasta-1)
+			end;
+
+
+start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,Unions,Hasta) when Hasta<50->
+			io:format("-------------STEP: ~w-------------~n",[Hasta]),	
+	
+			case Hasta == 0 of
+				
+				false ->
+								
+					Dis=0.9,
+					NumPos=ets:last(InstanciasP),
+					
+					%% Selección de la mejor acción a partir del modelo %%
+					GlobalOpt=programs:global_optimality(Programs),
+					io:format("GlobalOpt a Weka: ~w~n",[GlobalOpt]),
+					{_,BestAct,BestRule}=weka:best_action(Actions,TablaReglas,GlobalOpt,1,1,0,0,0),
+					io:format("Action: (~w,~w)~n ",[BestRule,BestAct]),
+					
+			
+					
+					[{_,{SelecRule,_,PrevActs}}]=ets:lookup(TablaReglas, BestRule),
+					[{KeyA,{_,CobAnt,Veces}}]=ets:lookup(Actions, BestAct),
+					%io:format("look Regla: ~p~n ",[ets:lookup(TablaReglas, BestRule)]),
+					%io:format("look Act: ~p~n ",[ets:lookup(Actions, BestAct)]),
+					Newrule=actions:atom2var(SelecRule, KeyA),
+					%io:format("NewRule: ~p~n ",[Newrule]),
+
+					case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+							false ->
+									
+								{Cob,PosCob}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+								NewKeyRule=ets:last(TablaReglas)+1,
+								ets:insert(TablaReglas, {NewKeyRule,{Newrule,Cob/NumPos,[KeyA|PrevActs]}}),
+								
+								%% Calculo de la "optimalidad" de la accion escogida %%												
+								case Veces == 1 of
+									true ->
+										NewCob= Cob/NumPos;
+									false ->
+										NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+								end,
+								
+								NomAct=lists:append("atom2var_",integer_to_list(KeyA)),
+								
+								%% Refuerzo de las acciones anteriores %%	
+								case PrevActs of 
+									[] -> 									
+										ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}});
+									_else ->
+										reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+										ets:update_element(Actions, KeyA, {2,{NomAct,NewCob,Veces+1}})
+								end,
+								
+								%% Generacion de programas (1º Regla unitaria nueva -> programa unitario (Cob>0); 2º Combiancion de programas %%
+								case PosCob =/=0 of
+								true ->
+									io:format("Inserto Regla como programa unitario: ~w~n -> ",[NewKeyRule]),
+									programs:newrule2programs(NewKeyRule,Cob/NumPos,PosCob,Programs),
+									io:format("Add Regla/Programa c: ~w~n -> ",[ets:last(Programs)]),
+									NewUnions=programs:addition(ets:last(Programs),Unions,NumPos,Programs),
+									io:format("Voy a UNION -> ~n",[]),	
+									NewUnions2=programs:union_programs_selectBest(Programs,NumPos,NewUnions);
+								false ->
+									io:format("Voy a UNION -> ~n",[]),	
+									NewUnions2=programs:union_programs_selectBest(Programs,NumPos,Unions)
+						
+								end,
+						
+								
+								%% Fin Step %%	
+								start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,NewUnions2,Hasta-1);			
+						
+						true ->
+								io:format("Nueva Regla ya existente en ETS reglas ~n",[]),
+								NewUnions2=programs:union_programs_selectBest(Programs,NumPos,Unions),
+								start3(InstanciasP, InstanciasN, TablaReglas,Actions,Programs,NewUnions2,Hasta-1)
+			
+					end;
+				true->
+					fin
+			end.
+					
+					
+					
+					
+atom2var(Regla,Pos)->
+	Cabeza=re:replace(string:sub_word(Regla,1,$(), " ", "",[global,{return,list}]),
+	Cuerpo=re:replace(string:sub_word(Regla,2,$(), " ", "",[global,{return,list}]),
+	Cuerpo1=re:replace(string:sub_word(Cuerpo,1,$)), " ", "",[global,{return,list}]),
+	Cola=string:sub_word(Cuerpo,2,$)),
+	%io:format("Cabeza: ~p~n",[Cabeza]),
+	%io:format("Cuerpo1: ~p~n",[Cuerpo1]),
+	%io:format("Cola: ~p~n",[Cola]),
+	Cuerpo2=atom2var2(Cuerpo1,"",(Pos+Pos-1)),
+	%io:format("Nuevo cuerpo ~s~n",[Cuerpo2]),
+	ReglaGen=string:concat(Cabeza,"("),
+	ReglaGen1=string:concat(ReglaGen,Cuerpo2),
+	ReglaGen2=string:concat(ReglaGen1,")"),
+	ReglaGen3=string:concat(ReglaGen2,Cola),
+	%io:format("Regla ~s~n",[ReglaGen3]),
+	ReglaGen3.
+	
+
+		
+
+atom2var2(Cuerpo,Nuevo,Pos)->
+	{ok,Terms,_}=erl_scan:string(Cuerpo),
+	Index=length(Terms),
+	%io:format("Indexxxx ~w~n",[Index]),	
+	atom2var2b(Terms,Nuevo,Pos,Index).
+
+
+atom2var2b(_,Nuevo,_,0)->
+	Nuevo;
+
+atom2var2b(Cuerpo,Nuevo,Pos,Pos)->
+	N=trunc(Pos/2),
+	Nuevo2=string:concat([65+N],Nuevo),
+	atom2var2b(Cuerpo,Nuevo2,Pos,Pos-1);
+
+atom2var2b(Terms,Nuevo,Pos,Index)->	
+	
+	%{ok,Terms,_}=erl_scan:string(Cuerpo),
+	%io:format("Terminos ~w~n",[Terms]),
+	%io:format("Index ~w~n",[Index]),	
+	%io:format("nth: ~w~n",[element(1,lists:nth(Index,Terms))]),
+	case element(1,lists:nth(Index,Terms)) of
+		',' ->
+			%io:format("COMA"),
+			Nuevo2=string:concat(",",Nuevo),
+			%io:format("~s ~n",[Nuevo2]),
+			atom2var2b(Terms,Nuevo2,Pos,Index-1);
+			
+		atom ->
+			%io:format("ATOM"),
+			Atom=element(3,lists:nth(Index,Terms)),
+			Nuevo3=string:concat(atom_to_list(Atom),Nuevo),
+			%io:format("~s ~n",[Nuevo3]),
+			atom2var2b(Terms,Nuevo3,Pos,Index-1);
+		
+		var ->
+			%io:format("VAR"),
+			Var=element(3,lists:nth(Index,Terms)),
+			Nuevo3=string:concat(atom_to_list(Var),Nuevo),
+			%io:format("~s ~n",[Nuevo3]),
+			atom2var2b(Terms,Nuevo3,Pos,Index-1);
+	
+		_else ->
+			%io:format("NADA"),
+			io:format("No he encontrado matching")
+	end.	
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+	
+	
+
+
+
+metaFlip(_, _, _, _, _, _, _, _, _, _, _, List, _,_,_, _, 0)->
+	
+	io:format("Opt: ~p~n",[List]),
+	ok;
+	%io:format("Matrix=~w~n",[MatrixPrograms]);
+%metaFlip(_, _, _, _, _, _, _,  _, _, 0)->
+	%io:format("List Actions: ~w ~n",[ListActions]),
+	%fin;
+		
+	
+metaFlip(InstanciasP, InstanciasN, TablaReglas,LastR, TablaReglasStep, Actions, ListActions, Programs, MatrixPrograms, Unions, OperatorsModule,ListsOptGlobal, Inf_Prev, InfPrevETS, WantProgs, Hasta, Steps) ->	
+
+	%metaFlip(InstanciasP, InstanciasN, TablaReglas,LastR, Actions, ListActions, Programs, Unions, Hasta, Steps)->
+	%io:format("------------- STEP: ~w -------------~n",[Steps]),	
+	%io:format("Matrix Programs: ~w~n",[MatrixPrograms]),
+	Dis=0.9,
+	NumPos=ets:last(InstanciasP),
+	GlobalOpt=programs:global_optimality(Programs),
+	%io:format("GlobalOpt a Weka: ~w~n",[GlobalOpt]),
+	
+	%Epsilon=reinforcement:averageOptGlobal(ListsOptGlobal,20),
+	Epsilon=1000,
+	case Epsilon<0.000000000000000000001 of
+		
+		
+		false ->
+
+			case Steps > (8*trunc(Hasta/10)) of 
+		
+				true ->
+						
+						case Inf_Prev of
+							
+							false ->
+									% Seleccion de la mejor Accion de manera aleatoria %%
+									{BestAct,BestRule,NewListActions}=reinforcement:randomAction(ets:last(Actions), ets:last(TablaReglas),ListActions),
+									LastRule=0;
+							true ->
+									%io:format("Inf previa ~n",[]),
+									%{BestAct,BestRule,NewListActions}=reinforcement:randomActionNonUniform(ets:last(Actions), ets:last(TablaReglas), ListActions, InfPrevETS),
+									%LastRule=0
+									{BestAct,BestRule,NewListActions}=reinforcement:randomAction(ets:last(Actions), ets:last(TablaReglas),ListActions),
+									LastRule=0
+						end;
+							
+					
+			
+				false ->
+			
+						case Steps == (8*trunc(Hasta/10)) of
+				
+							false->
+					
+								case Steps rem 20 of 
+						
+									0 ->
+	
+										%% Generación del modelo incremental%%
+										io:format("Modelo---~n",[]),
+										weka:gen_arff("Actions.arff","Actions",Actions,TablaReglas),
+										clientWeka:client_DM_Gen(),
+										GlobalOpt=programs:global_optimality(Programs),
+										%io:format("GlobalOpt a Weka: ~w~n",[GlobalOpt]),
+										%%Última regla para poder ser elegida por el modelo.
+										LastRule=ets:last(TablaReglas),
+										%% Selección de la mejor acción a partir del modelo %%
+										{_,BestAct,BestRule}=weka:best_action(Actions,ListActions,TablaReglas,LastRule,GlobalOpt,1,1,-1,0,0),
+											%{_,BestAct,BestRule}=weka:best_action(Actions,ListActions,TablaReglas,LastRule,0.000000,1,1,-1,0,0),
+										%case lists:member({BestAct,BestRule},ListActions) of
+										%	false ->
+										NewListActions=gb_sets:add_element({BestAct,BestRule},ListActions);
+										%	_Else ->
+										%		NewListActions=ListActions
+										%end;
+										%io:format("Action Model Class: (~w,~w)~n ",[BestRule,BestAct]);
+				
+									_Else ->
+					
+										%% Selección de la mejor acción a partir del modelo %%
+										{_,BestAct,BestRule}=weka:best_action(Actions,ListActions,TablaReglas,LastR,GlobalOpt,1,1,-1,0,0),
+											%{_,BestAct,BestRule}=weka:best_action(Actions,ListActions,TablaReglas,LastR,0.000000,1,1,-1,0,0),
+										%	case lists:member({BestAct,BestRule},ListActions) of
+										%		false ->
+										%			%io:format("No existe acción~n",[]),
+										%			%io:format("List Actions: ~w ~n",[ListActions]),
+										NewListActions=gb_sets:add_element({BestAct,BestRule},ListActions),
+										%		true ->
+										%			%io:format("Existe acción~n",[]),
+										%			%io:format("List Actions: ~w ~n",[ListActions]),
+										%			NewListActions=ListActions
+										%	end,
+										%io:format("Action  Class: (~w,~w)~n ",[BestRule,BestAct])
+										LastRule=LastR
+					
+			
+								end;
+						
+							true ->
+					
+								%primer modelo%
+								io:format("Modelo---~n",[]),
+								weka:gen_arff("Actions.arff","Actions",Actions,TablaReglas),
+								clientWeka:client_DM_Gen(),
+								GlobalOpt=programs:global_optimality(Programs),
+								%io:format("GlobalOpt a Weka: ~w~n",[GlobalOpt]),
+								%%Última regla para poder ser elegida por el modelo.
+								LastRule=ets:last(TablaReglas),
+								%% Selección de la mejor acción a partir del modelo %%
+								{_,BestAct,BestRule}=weka:best_action(Actions,ListActions,TablaReglas,LastRule,GlobalOpt,1,1,-1,0,0),
+								% {_,BestAct,BestRule}=weka:best_action(Actions,ListActions,TablaReglas,LastRule,0.000000,1,1,-1,0,0),
+								NewListActions=gb_sets:add_element({BestAct,BestRule},ListActions)
+						
+						end
+			end,
+	
+			
+
+			%En el caso de no encontrar mejor accion, lanzo una aleatoria.
+			case (BestRule==0) or (BestAct==0) of
+				
+				true ->
+					%io:format("Action Random: (~w,~w)~n ",[BestRule,BestAct]),
+					{BestActR,BestRuleR,NewListActions2}=reinforcement:randomAction(ets:last(Actions), ets:last(TablaReglas),NewListActions),
+					[{KeyR,{SelecRule,_,PrevActs,_,_,_,_}}]=ets:lookup(TablaReglas, BestRuleR),
+					[{KeyA,{NameOp,ArityOp,CobAnt,Veces}}]=ets:lookup(Actions, BestActR);
+		
+				false ->
+			
+					%io:format("Action: (~w,~w)~n ",[BestRule,BestAct]),
+					NewListActions2=NewListActions,
+					[{KeyR,{SelecRule,_,PrevActs,_,_,_,_}}]=ets:lookup(TablaReglas, BestRule),
+					[{KeyA,{NameOp,ArityOp,CobAnt,Veces}}]=ets:lookup(Actions, BestAct)
+			
+			end,
+	
+			%Newrule=actions:atom2var(SelecRule, KeyA),
+			%Newrule=OperatorsModule:atom2var(SelecRule,KeyA),
+	
+	
+			% Load user's operators %
+			%[{_,{NameOp,_,_}}]=ets:lookup(Actions, KeyA),
+			OpSelected=fun OperatorsModule:NameOp/1,
+			Newrule=OpSelected(SelecRule),
+			io:format("---------------------------------------------------------------~n"),
+			io:format("RULE TRANSFORMATION: (~p) ~p  ---(~p)--->  ~p~n ",[KeyR,SelecRule,NameOp,Newrule]),
+			
+			case WantProgs of
+				
+				1 ->		
+					flipRulesPrograms(Newrule, TablaReglas, TablaReglasStep,InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule,  ListsOptGlobal,Inf_Prev, InfPrevETS, Hasta,  length(Newrule));
+				0 ->
+					flipRules(Newrule, TablaReglas, TablaReglasStep,InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule,  ListsOptGlobal,Inf_Prev, InfPrevETS, Hasta,  length(Newrule))
+			end;
+
+		true->
+			
+		 	io:format("acabo por average<0.001 -> ~p~n",[Epsilon]),
+			io:format("Opt: ~p~n",[ListsOptGlobal]),
+			metaFlip(InstanciasP, InstanciasN, TablaReglas,LastR, TablaReglasStep, Actions, ListActions, Programs, MatrixPrograms, Unions, OperatorsModule,ListsOptGlobal,Inf_Prev, InfPrevETS, WantProgs, Hasta, 0)
+	
+	end.
+
+
+%flipRulesPrograms(_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, , _, 0) ->
+	
+
+
+flipRulesPrograms(NewRules, TablaReglas, TablaReglasStep,InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule, ListsOptGlobal, Inf_Prev, InfPrevETS,Hasta,  IndexNewRules) ->
+	
+	
+	
+	Newrule=lists:nth(IndexNewRules, NewRules),
+	
+	case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+					
+		false ->
+							
+			%{Cob,PosCob}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+			{Cob,PosCob,CobNeg,NegCov}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+			NewKeyRule=ets:last(TablaReglas)+1,
+			ets:insert(TablaReglas, {NewKeyRule,{Newrule,Cob/NumPos,[KeyA|PrevActs],Cob,PosCob,CobNeg,NegCov}}),
+			ets:insert(TablaReglasStep, {NewKeyRule,Hasta-Steps}),
+						
+			%% Calculo de la "optimalidad" del operador escogida (media de cobertura de las reglas creadas) %%
+			case Veces == 1 of
+					
+				true ->
+					NewCob= Cob/NumPos;
+
+				false ->
+					NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+
+			end,
+
+			io:format("COBERTURA: ~p E+: ~p~n",[Cob,PosCob]),
+							
+			%% Refuerzo de las acciones anteriores %%
+			case PrevActs of 
+					
+					[] -> 									
+						ets:update_element(Actions, KeyA, {2,{NameOp,ArityOp,NewCob,Veces+1}});
+						
+
+					_else ->
+						Dis=0.9,
+						reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+						ets:update_element(Actions, KeyA, {2,{NameOp,ArityOp,NewCob,Veces+1}})
+
+			end,
+			
+			
+						
+			%% Generacion de programas (1º Regla unitaria nueva -> programa unitario (Cob>0); 2º Combiancion de programas %%
+			%case Cob=/=0 of
+
+			case (CobNeg == 0) and (Cob =/= 0) of
+				true ->
+					%io:format("Inserto Regla como programa unitario: ~w~n -> ",[NewKeyRule]),
+					programs:newrule2programs(NewKeyRule,Cob,PosCob,Programs,NumPos),
+					programs:add2Matrix(MatrixPrograms, Programs,NumPos),
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]),
+					%io:format("Add Regla/Programa c: ~w~n -> ",[ets:last(Programs)]),
+					
+					%{IdProgA,P1a,P2a,NewUnions,OptAdd}=programs:addition(ets:last(Programs),Unions,NumPos,Programs),
+					{IdProgA,P1a,P2a,NewUnions,OptAdd}=programs:addition_withMatrix(ets:last(Programs),Unions,NumPos,Programs,MatrixPrograms),
+					
+					
+					programs:add2Matrix(MatrixPrograms, Programs,NumPos),
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]),
+					
+					%io:format("Voy a UNION -> ~n",[]),	
+					%NewUnions2=programs:union_programs_selectBest(Programs,NumPos,NewUnions);
+					%{P1u,P2u,NewUnions2}=programs:union_programs_ranking(Programs,NumPos,NewUnions);
+					io:format("end--: ~p~n",[ets:last(MatrixPrograms)]),
+					{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(Programs,NumPos,NewUnions,MatrixPrograms),
+					%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_ranking(Programs, NumPos, NewUnions),
+					programs:add2Matrix(MatrixPrograms, Programs,NumPos);
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]);
+					%io:format("Uniones realizadas: ~w~n",[NewUnions2]);
+				
+				false ->
+					%io:format("Voy a UNION -> ~n",[]),	
+					P1a=0,P2a=0,OptAdd=-300,
+					{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(Programs,NumPos,Unions,MatrixPrograms),
+					IdProgA=0,
+					%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_ranking(Programs, NumPos, Unions),
+					programs:add2Matrix(MatrixPrograms, Programs,NumPos)
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')])
+					%io:format("Uniones realizadas: ~w~n",[NewUnions2])
+			end,
+			
+		
+			
+			%% Generacion fichero .arff para Weka %%
+			[Ari,NumVars]=weka:count_variablesR(Newrule),
+			
+			GlobalOptNew=programs:global_optimality(Programs),
+			NewListsOptGlobal=ListsOptGlobal++[GlobalOptNew],
+			%io:format("----------------GlobalOptNew: ~w~n ",[GlobalOptNew]),
+			io:format("Weka Instance: State(GlobOpt): ~p, Rule: ~p, Vars: ~p, Arity: ~p, Operator: ~p, CobRule: ~p, Inc(Class):~p ~n",[GlobalOpt,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt]),
+			weka:new("DataArff.txt",GlobalOpt,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt),
+			%weka:new("DataArff.txt",0.000000,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt),
+								
+			%%Fin Step%%			
+			io:format("Step: ~w | RULE + UNION + [ADDITION] |  Action: (~w,~w), Addtion: (~w,~w), ProgramAdd: ~w, OptAdd: ~w, Union: (~w,~w), ProgramUnion: ~w, OptIndiv: ~w, Opt Before: ~w, Opt After: ~w ~n",[Steps,BestAct,BestRule,P1a,P2a,IdProgA,OptAdd,P1u,P2u,IdProgU,OptUni,GlobalOpt,GlobalOptNew]),
+			%io:format("Uniones: ~w~n",[NewUnions2]),
+			
+			case IndexNewRules > 1 of
+				
+				true ->
+					
+					flipRulesPrograms(NewRules, TablaReglas,TablaReglasStep, InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule, NewListsOptGlobal, Inf_Prev, InfPrevETS, Hasta, IndexNewRules-1);
+
+				false ->
+			
+					metaFlip(InstanciasP, InstanciasN, TablaReglas, LastRule, TablaReglasStep,Actions, NewListActions2,Programs,MatrixPrograms,NewUnions2,OperatorsModule, NewListsOptGlobal, Inf_Prev, InfPrevETS, 1,Hasta,Steps-1)	
+					%metaFlip(InstanciasP, InstanciasN, TablaReglas, LastRule, Actions, NewListActions2,Programs,NewUnions2,Hasta,Steps-1);	
+			end;
+				
+		true ->
+						
+			io:format("Nueva Regla ya existente en ETS reglas~n ",[]),
+			
+			{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(Programs,NumPos,Unions,MatrixPrograms),
+			
+			%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_ranking(Programs, NumPos, Unions),
+			GlobalOptNew2=programs:global_optimality(Programs),
+			NewListsOptGlobal=ListsOptGlobal++[GlobalOptNew2],
+			io:format("Step: ~w, | UNION | Action: (~w,~w), NO Addtion, Union: (~w,~w), ProgramUnion: ~w, OptUnion: ~w, Opt Before: ~w, Opt After: ~w ~n",[Steps,BestAct,BestRule,P1u,P2u,IdProgU,OptUni,GlobalOpt,GlobalOptNew2]),
+			programs:add2Matrix(MatrixPrograms, Programs, NumPos),
+			%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]),
+			%io:format("Uniones: ~w~n",[NewUnions2]),
+			
+			case IndexNewRules > 1 of
+				
+				true ->
+					
+					flipRulesPrograms(NewRules, TablaReglas, TablaReglasStep, InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule, NewListsOptGlobal, Inf_Prev, InfPrevETS, Hasta, IndexNewRules-1);
+				
+				false ->
+			
+					metaFlip(InstanciasP, InstanciasN, TablaReglas, LastRule, TablaReglasStep, Actions, NewListActions2,Programs,MatrixPrograms,NewUnions2,OperatorsModule, NewListsOptGlobal,Inf_Prev, InfPrevETS, 1,Hasta,Steps-1)	
+			
+			end
+			
+			%metaFlip(InstanciasP, InstanciasN, TablaReglas,LastRule, Actions, NewListActions2,Programs,MatrixPrograms,NewUnions2,OperatorsModule,Hasta,Steps-1)
+			%metaFlip(InstanciasP, InstanciasN, TablaReglas,LastRule, Actions, NewListActions2,Programs,NewUnions2,Hasta,Steps-1)
+			
+	end.
+
+
+
+flipRules(NewRules, TablaReglas, TablaReglasStep,InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule, ListsOptGlobal, Inf_Prev, InfPrevETS,Hasta,  IndexNewRules) ->
+	
+	
+	
+	Newrule=lists:nth(IndexNewRules, NewRules),
+	
+	case util:already_exists(Newrule,TablaReglas,ets:last(TablaReglas)+1) of
+					
+		false ->
+							
+			%{Cob,PosCob}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+			{Cob,PosCob,CobNeg,NegCov}=util:cobertura_Funcional(InstanciasP, InstanciasN, Newrule),
+			NewKeyRule=ets:last(TablaReglas)+1,
+			ets:insert(TablaReglas, {NewKeyRule,{Newrule,Cob/NumPos,[KeyA|PrevActs],Cob,PosCob,CobNeg,NegCov}}),
+			ets:insert(TablaReglasStep, {NewKeyRule,Hasta-Steps}),
+						
+			%% Calculo de la "optimalidad" del operador escogida (media de cobertura de las reglas creadas) %%
+			case Veces == 1 of
+					
+				true ->
+					NewCob= Cob/NumPos;
+
+				false ->
+					NewCob=CobAnt+(((Cob/NumPos)-CobAnt)/Veces)
+
+			end,
+
+			io:format("COBERTURA: ~p E+: ~p~n",[Cob,PosCob]),
+							
+			%% Refuerzo de las acciones anteriores %%
+			case PrevActs of 
+					
+					[] -> 									
+						ets:update_element(Actions, KeyA, {2,{NameOp,ArityOp,NewCob,Veces+1}});
+						
+
+					_else ->
+						Dis=0.9,
+						reinforcement:creditAssignActions(Actions,PrevActs,Cob/NumPos,Dis,NumPos),
+						ets:update_element(Actions, KeyA, {2,{NameOp,ArityOp,NewCob,Veces+1}})
+
+			end,
+			
+			
+						
+			%% Generacion de programas (1º Regla unitaria nueva -> programa unitario (Cob>0); 2º Combiancion de programas %%
+			%case Cob=/=0 of
+
+			%case (CobNeg == 0) and (Cob =/= 0) of
+			%	true ->
+					%io:format("Inserto Regla como programa unitario: ~w~n -> ",[NewKeyRule]),
+			%		programs:newrule2programs(NewKeyRule,Cob,PosCob,Programs,NumPos),
+			%		programs:add2Matrix(MatrixPrograms, Programs,NumPos),
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]),
+					%io:format("Add Regla/Programa c: ~w~n -> ",[ets:last(Programs)]),
+					
+					%{IdProgA,P1a,P2a,NewUnions,OptAdd}=programs:addition(ets:last(Programs),Unions,NumPos,Programs),
+			%		{IdProgA,P1a,P2a,NewUnions,OptAdd}=programs:addition_withMatrix(ets:last(Programs),Unions,NumPos,Programs,MatrixPrograms),
+					
+					
+			%		programs:add2Matrix(MatrixPrograms, Programs,NumPos),
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]),
+					
+					%io:format("Voy a UNION -> ~n",[]),	
+					%NewUnions2=programs:union_programs_selectBest(Programs,NumPos,NewUnions);
+					%{P1u,P2u,NewUnions2}=programs:union_programs_ranking(Programs,NumPos,NewUnions);
+			%		io:format("end--: ~p~n",[ets:last(MatrixPrograms)]),
+			%		{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(Programs,NumPos,NewUnions,MatrixPrograms),
+					%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_ranking(Programs, NumPos, NewUnions),
+			%		programs:add2Matrix(MatrixPrograms, Programs,NumPos);
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]);
+					%io:format("Uniones realizadas: ~w~n",[NewUnions2]);
+				
+			%	false ->
+					%io:format("Voy a UNION -> ~n",[]),	
+			%		P1a=0,P2a=0,OptAdd=-300,
+			%		{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(Programs,NumPos,Unions,MatrixPrograms),
+			%		IdProgA=0,
+					%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_ranking(Programs, NumPos, Unions),
+			%		programs:add2Matrix(MatrixPrograms, Programs,NumPos)
+					%io:format("~p~n",[ets:match(MatrixPrograms,'$1')])
+					%io:format("Uniones realizadas: ~w~n",[NewUnions2])
+			%end,
+			
+		
+			
+			%% Generacion fichero .arff para Weka %%
+			[Ari,NumVars]=weka:count_variablesR(Newrule),
+			
+			GlobalOptNew=programs:global_optimality(Programs),
+			
+			NewListsOptGlobal=ListsOptGlobal++[GlobalOptNew],
+			%io:format("----------------GlobalOptNew: ~w~n ",[GlobalOptNew]),
+			io:format("Weka Instance: State(GlobOpt): ~p, Rule: ~p, Vars: ~p, Arity: ~p, Operator: ~p, CobRule: ~p, Inc(Reward):~p ~n",[GlobalOpt,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt]),
+			weka:new("DataArff.txt",GlobalOpt,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt),
+			%weka:new("DataArff.txt",0.000000,KeyR,NumVars,Ari,KeyA,Cob/NumPos,GlobalOptNew-GlobalOpt),
+								
+			%%Fin Step%%			
+			%io:format("Step: ~w | RULE + UNION + [ADDITION] |  Action: (~w,~w), Addtion: (~w,~w), ProgramAdd: ~w, OptAdd: ~w, Union: (~w,~w), ProgramUnion: ~w, OptIndiv: ~w, Opt Before: ~w, Opt After: ~w ~n",[Steps,BestAct,BestRule,P1a,P2a,IdProgA,OptAdd,P1u,P2u,IdProgU,OptUni,GlobalOpt,GlobalOptNew]),
+			%io:format("Uniones: ~w~n",[NewUnions2]),
+			
+			case IndexNewRules > 1 of
+				
+				true ->
+					
+					flipRules(NewRules, TablaReglas,TablaReglasStep, InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule, NewListsOptGlobal, Inf_Prev, InfPrevETS, Hasta, IndexNewRules-1);
+
+				false ->
+			
+					metaFlip(InstanciasP, InstanciasN, TablaReglas, LastRule, TablaReglasStep,Actions, NewListActions2,Programs,MatrixPrograms,Unions,OperatorsModule, NewListsOptGlobal, Inf_Prev, InfPrevETS, 0,Hasta,Steps-1)	
+					%metaFlip(InstanciasP, InstanciasN, TablaReglas, LastRule, Actions, NewListActions2,Programs,NewUnions2,Hasta,Steps-1);	
+			end;
+				
+		true ->
+						
+			io:format("Nueva Regla ya existente en ETS reglas~n ",[]),
+			
+			%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_matrix(Programs,NumPos,Unions,MatrixPrograms),
+			
+			%{IdProgU,P1u,P2u,NewUnions2,OptUni}=programs:union_programs_ranking(Programs, NumPos, Unions),
+			GlobalOptNew2=programs:global_optimality(Programs),
+			NewListsOptGlobal=ListsOptGlobal++[GlobalOptNew2],
+			%io:format("Step: ~w, | UNION | Action: (~w,~w), NO Addtion, Union: (~w,~w), ProgramUnion: ~w, OptUnion: ~w, Opt Before: ~w, Opt After: ~w ~n",[Steps,BestAct,BestRule,P1u,P2u,IdProgU,OptUni,GlobalOpt,GlobalOptNew2]),
+			%programs:add2Matrix(MatrixPrograms, Programs, NumPos),
+			%io:format("~p~n",[ets:match(MatrixPrograms,'$1')]),
+			%io:format("Uniones: ~w~n",[NewUnions2]),
+			
+			case IndexNewRules > 1 of
+				
+				true ->
+					
+					flipRules(NewRules, TablaReglas, TablaReglasStep, InstanciasN, InstanciasP, KeyA, KeyR,  NumPos, PrevActs, ArityOp, Veces, CobAnt, Actions, NameOp, Programs, MatrixPrograms, Unions, GlobalOpt, BestAct, BestRule, Steps, NewListActions2, OperatorsModule, LastRule, NewListsOptGlobal, Inf_Prev, InfPrevETS,Hasta, IndexNewRules-1);
+				
+				false ->
+			
+					metaFlip(InstanciasP, InstanciasN, TablaReglas, LastRule, TablaReglasStep, Actions, NewListActions2,Programs,MatrixPrograms,Unions,OperatorsModule, NewListsOptGlobal,Inf_Prev, InfPrevETS,0, Hasta,Steps-1)	
+			
+			end
+			
+			%metaFlip(InstanciasP, InstanciasN, TablaReglas,LastRule, Actions, NewListActions2,Programs,MatrixPrograms,NewUnions2,OperatorsModule,Hasta,Steps-1)
+			%metaFlip(InstanciasP, InstanciasN, TablaReglas,LastRule, Actions, NewListActions2,Programs,NewUnions2,Hasta,Steps-1)
+			
+	end.
+					

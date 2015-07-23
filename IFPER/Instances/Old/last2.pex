@@ -1,0 +1,8 @@
+last([c])->c.
+last([b])->b.
+last([l])->l.
+last([a,b,c])->c.
+last([t,b,n,a,b])->b.
+last([h,h,t,a,l])->l.
+last([a,c,b])->b.
+last([a,b,a,c])->c.

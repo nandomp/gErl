@@ -1,0 +1,5 @@
+last([a])->b.
+last([b])->a.
+last([])->a.
+last([b,a])->b.
+last([a,b,a])->b.

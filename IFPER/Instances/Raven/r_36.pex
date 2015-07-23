@@ -1,0 +1,4 @@
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],[75],[up],[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],[50],[up],[above]].	
+r([[[[a, 0, left,above]], [[a,25, left,above]], [[a, 50, left,above]]],  [[[c,25, left,above]], [[c,50, left,above]]]])->[[c],[75],[left],[above]].
+r([[[[c, 25, left, above]], [[c, 50, left, above]], [[c,75, left, above]]],  [[[a, 0, left,above]], [[a,25, left,above]]]])->[[a],[50],[left],[above]].

@@ -1,0 +1,7 @@
+f([a,a,b,a])->[a,a,a,a].
+f([a,a])->[a,a].
+f([a])->[a].
+f([b,b,b])->[a,a,a].
+f([b])->[a].
+f([a,b,a,b])->[a,a,a,a].
+f([b,b,a,b,a,a])->[a,a,a,a,a,a].

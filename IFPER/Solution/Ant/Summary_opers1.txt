@@ -1,0 +1,200 @@
+SAMPLE: 1 PCY: 1 Problem: 2 --> Mejor Regla: 17 Step:20
+
+SAMPLE: 1 PCY: 1 Problem: 3 --> Mejor Regla: 18 Step:20
+
+SAMPLE: 1 PCY: 1 Problem: 4 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 1 PCY: 1 Problem: 5 --> Mejor Regla: 12 Step:20
+
+SAMPLE: 1 PCY: 2 Problem: 1 --> Mejor Regla: 24 Step:80
+
+SAMPLE: 1 PCY: 2 Problem: 3 --> Mejor Regla: 22 Step:40
+
+SAMPLE: 1 PCY: 2 Problem: 4 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 1 PCY: 2 Problem: 5 --> Mejor Regla: 19 Step:20
+
+SAMPLE: 1 PCY: 3 Problem: 1 --> Mejor Regla: 19 Step:34
+
+SAMPLE: 1 PCY: 3 Problem: 2 --> Mejor Regla: 15 Step:28
+
+SAMPLE: 1 PCY: 3 Problem: 4 --> Mejor Regla: 13 Step:28
+
+SAMPLE: 1 PCY: 3 Problem: 5 --> Mejor Regla: 17 Step:32
+
+SAMPLE: 1 PCY: 4 Problem: 1 --> Mejor Regla: 23 Step:83
+
+SAMPLE: 1 PCY: 4 Problem: 2 --> Mejor Regla: 19 Step:20
+
+SAMPLE: 1 PCY: 4 Problem: 3 --> Mejor Regla: 34 Step:22
+
+SAMPLE: 1 PCY: 4 Problem: 5 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 1 PCY: 5 Problem: 1 --> Mejor Regla: 26 Step:81
+
+SAMPLE: 1 PCY: 5 Problem: 2 --> Mejor Regla: 17 Step:20
+
+SAMPLE: 1 PCY: 5 Problem: 3 --> Mejor Regla: 26 Step:20
+
+SAMPLE: 1 PCY: 5 Problem: 4 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 2 PCY: 1 Problem: 2 --> Mejor Regla: 15 Step:23
+
+SAMPLE: 2 PCY: 1 Problem: 3 --> Mejor Regla: 43 Step:55
+
+SAMPLE: 2 PCY: 1 Problem: 4 --> Mejor Regla: 18 Step:22
+
+SAMPLE: 2 PCY: 1 Problem: 5 --> Mejor Regla: 18 Step:21
+
+SAMPLE: 2 PCY: 2 Problem: 1 --> Mejor Regla: 27 Step:102
+
+SAMPLE: 2 PCY: 2 Problem: 3 --> Mejor Regla: 20 Step:42
+
+SAMPLE: 2 PCY: 2 Problem: 4 --> Mejor Regla: 18 Step:22
+
+SAMPLE: 2 PCY: 2 Problem: 5 --> Mejor Regla: 19 Step:22
+
+SAMPLE: 2 PCY: 3 Problem: 1 --> Mejor Regla: 18 Step:22
+
+SAMPLE: 2 PCY: 3 Problem: 2 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 2 PCY: 3 Problem: 4 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 2 PCY: 3 Problem: 5 --> Mejor Regla: 12 Step:20
+
+SAMPLE: 2 PCY: 4 Problem: 1 --> Mejor Regla: 27 Step:100
+
+SAMPLE: 2 PCY: 4 Problem: 2 --> Mejor Regla: 20 Step:20
+
+SAMPLE: 2 PCY: 4 Problem: 3 --> Mejor Regla: 28 Step:20
+
+SAMPLE: 2 PCY: 4 Problem: 5 --> Mejor Regla: 19 Step:44
+
+SAMPLE: 2 PCY: 5 Problem: 1 --> Mejor Regla: 27 Step:100
+
+SAMPLE: 2 PCY: 5 Problem: 2 --> Mejor Regla: 20 Step:20
+
+SAMPLE: 2 PCY: 5 Problem: 3 --> Mejor Regla: 28 Step:20
+
+SAMPLE: 2 PCY: 5 Problem: 4 --> Mejor Regla: 18 Step:20
+
+SAMPLE: 3 PCY: 1 Problem: 2 --> Mejor Regla: 15 Step:23
+
+SAMPLE: 3 PCY: 1 Problem: 3 --> Mejor Regla: 20 Step:26
+
+SAMPLE: 3 PCY: 1 Problem: 4 --> Mejor Regla: 18 Step:26
+
+SAMPLE: 3 PCY: 1 Problem: 5 --> Mejor Regla: 15 Step:24
+
+SAMPLE: 3 PCY: 2 Problem: 1 --> Mejor Regla: 25 Step:86
+
+SAMPLE: 3 PCY: 2 Problem: 3 --> Mejor Regla: 20 Step:20
+
+SAMPLE: 3 PCY: 2 Problem: 4 --> Mejor Regla: 20 Step:21
+
+SAMPLE: 3 PCY: 2 Problem: 5 --> Mejor Regla: 17 Step:22
+
+SAMPLE: 3 PCY: 3 Problem: 1 --> Mejor Regla: 18 Step:62
+
+SAMPLE: 3 PCY: 3 Problem: 2 --> Mejor Regla: 12 Step:22
+
+SAMPLE: 3 PCY: 3 Problem: 4 --> Mejor Regla: 19 Step:26
+
+SAMPLE: 3 PCY: 3 Problem: 5 --> Mejor Regla: 19 Step:24
+
+SAMPLE: 3 PCY: 4 Problem: 1 --> Mejor Regla: 22 Step:62
+
+SAMPLE: 3 PCY: 4 Problem: 2 --> Mejor Regla: 17 Step:20
+
+SAMPLE: 3 PCY: 4 Problem: 3 --> Mejor Regla: 24 Step:20
+
+SAMPLE: 3 PCY: 4 Problem: 5 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 3 PCY: 5 Problem: 1 --> Mejor Regla: 20 Step:60
+
+SAMPLE: 3 PCY: 5 Problem: 2 --> Mejor Regla: 19 Step:20
+
+SAMPLE: 3 PCY: 5 Problem: 3 --> Mejor Regla: 41 Step:21
+
+SAMPLE: 3 PCY: 5 Problem: 4 --> Mejor Regla: 19 Step:21
+
+SAMPLE: 4 PCY: 1 Problem: 2 --> Mejor Regla: 17 Step:38
+
+SAMPLE: 4 PCY: 1 Problem: 3 --> Mejor Regla: 21 Step:20
+
+SAMPLE: 4 PCY: 1 Problem: 4 --> Mejor Regla: 15 Step:28
+
+SAMPLE: 4 PCY: 1 Problem: 5 --> Mejor Regla: 13 Step:22
+
+SAMPLE: 4 PCY: 2 Problem: 1 --> Mejor Regla: 14 Step:40
+
+SAMPLE: 4 PCY: 2 Problem: 3 --> Mejor Regla: 23 Step:20
+
+SAMPLE: 4 PCY: 2 Problem: 4 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 4 PCY: 2 Problem: 5 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 4 PCY: 3 Problem: 1 --> Mejor Regla: 13 Step:21
+
+SAMPLE: 4 PCY: 3 Problem: 2 --> Mejor Regla: 21 Step:50
+
+SAMPLE: 4 PCY: 3 Problem: 4 --> Mejor Regla: 15 Step:45
+
+SAMPLE: 4 PCY: 3 Problem: 5 --> Mejor Regla: 21 Step:53
+
+SAMPLE: 4 PCY: 4 Problem: 1 --> Mejor Regla: 24 Step:63
+
+SAMPLE: 4 PCY: 4 Problem: 2 --> Mejor Regla: 17 Step:20
+
+SAMPLE: 4 PCY: 4 Problem: 3 --> Mejor Regla: 27 Step:20
+
+SAMPLE: 4 PCY: 4 Problem: 5 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 4 PCY: 5 Problem: 1 --> Mejor Regla: 18 Step:65
+
+SAMPLE: 4 PCY: 5 Problem: 2 --> Mejor Regla: 20 Step:20
+
+SAMPLE: 4 PCY: 5 Problem: 3 --> Mejor Regla: 27 Step:20
+
+SAMPLE: 4 PCY: 5 Problem: 4 --> Mejor Regla: 18 Step:22
+
+SAMPLE: 5 PCY: 1 Problem: 2 --> Mejor Regla: 21 Step:35
+
+SAMPLE: 5 PCY: 1 Problem: 3 --> Mejor Regla: 36 Step:43
+
+SAMPLE: 5 PCY: 1 Problem: 4 --> Mejor Regla: 22 Step:41
+
+SAMPLE: 5 PCY: 1 Problem: 5 --> Mejor Regla: 22 Step:41
+
+SAMPLE: 5 PCY: 2 Problem: 1 --> Mejor Regla: 25 Step:80
+
+SAMPLE: 5 PCY: 2 Problem: 3 --> Mejor Regla: 38 Step:40
+
+SAMPLE: 5 PCY: 2 Problem: 4 --> Mejor Regla: 19 Step:21
+
+SAMPLE: 5 PCY: 2 Problem: 5 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 5 PCY: 3 Problem: 1 --> Mejor Regla: 20 Step:52
+
+SAMPLE: 5 PCY: 3 Problem: 2 --> Mejor Regla: 12 Step:20
+
+SAMPLE: 5 PCY: 3 Problem: 4 --> Mejor Regla: 17 Step:21
+
+SAMPLE: 5 PCY: 3 Problem: 5 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 5 PCY: 4 Problem: 1 --> Mejor Regla: 25 Step:84
+
+SAMPLE: 5 PCY: 4 Problem: 2 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 5 PCY: 4 Problem: 3 --> Mejor Regla: 24 Step:20
+
+SAMPLE: 5 PCY: 4 Problem: 5 --> Mejor Regla: 15 Step:20
+
+SAMPLE: 5 PCY: 5 Problem: 1 --> Mejor Regla: 25 Step:84
+
+SAMPLE: 5 PCY: 5 Problem: 2 --> Mejor Regla: 16 Step:20
+
+SAMPLE: 5 PCY: 5 Problem: 3 --> Mejor Regla: 24 Step:20
+
+SAMPLE: 5 PCY: 5 Problem: 4 --> Mejor Regla: 15 Step:20
+

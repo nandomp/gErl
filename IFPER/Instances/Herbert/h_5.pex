@@ -1,0 +1,8 @@
+h([d,e,f,g])->"e".
+h([d,e,f,g,e])->"f".
+h([d,e,f,g,e,f])->"g".
+h([d,e,f,g,e,f,g])->"h".
+h([d,e,f,g,e,f,g,h])->"f".
+h([d,e,f,g,e,f,g,h,f])->"g".
+h([d,e,f,g,e,f,g,h,f,g])->"h".
+h([d,e,f,g,e,f,g,h,f,g,h])->"i".

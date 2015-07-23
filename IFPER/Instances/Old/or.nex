@@ -1,0 +1,5 @@
+my_or(true,false)->false. 
+my_or(tv,true)->tv.
+my_or(false,radio)->false. 
+my_or(casa,false)->false. 
+my_or(false,radio)->true

@@ -1,0 +1,5 @@
+s([the,dog,walks,to,the,man])->true.
+s([the,man,walks,in,the,house])->true.
+s([the,dog,walks,on,the,house])->true.
+s([the,small,dog,walks,in,the,house])->true.
+s([the,man,hits,the,nasty,dog])->true.

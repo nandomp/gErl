@@ -1,0 +1,12 @@
+letter([w,x,a])->"x".
+letter([w,x,a,x])->"y".
+letter([w,x,a,x,y])->"b".
+letter([w,x,a,x,y,b])->"y".
+letter([w,x,a,x,y,b,y])->"z".
+letter([w,x,a,x,y,b,y,z])->"c".
+letter([w,x,a,x,y,b,y,z,c])->"z".
+letter([w,x,a,x,y,b,y,z,c,z])->"a".
+letter([w,x,a,x,y,b,y,z,c,z,a])->"d".
+letter([w,x,a,x,y,b,y,z,c,z,a,d])->"a".
+letter([w,x,a,x,y,b,y,z,c,z,a,d,a])->"b".
+letter([w,x,a,x,y,b,y,z,c,z,a,d,a,b])->"e".

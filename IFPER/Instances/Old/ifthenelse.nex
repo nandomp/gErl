@@ -1,0 +1,8 @@
+ifthenelse(true,manzana,pera)->pera.
+ifthenelse(true,manzana,ventana)->ventana.
+ifthenelse(false,camion,coche)->camion.
+ifthenelse(false,perro,coche)->perro.
+ifthenelse(true,a,b)->b.
+ifthenelse(true,c,d)->d.
+ifthenelse(false,e,f)->e.
+ifthenelse(false,g,h)->g.

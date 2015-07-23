@@ -1,0 +1,8 @@
+member([g,g],j)->true.
+member([],a)->true.
+member([i],n)->true.
+member([p],o)->true.
+member([r,r],z)->true.
+member([],e)->true.
+member([t,t,t],s)->true.
+member([k,k,k],y)->true.

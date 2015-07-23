@@ -1,0 +1,12 @@
+s([the,dog,walks,to,the,man])->true.
+s([the,man,walks,the,dog])->true.
+s([the,man,hits,the,dog])->true.
+s([a,ball,hits,the,dog])->true.
+s([the,big,man,hits,at,the,ball])->true.
+s([the,small,dog,walks,on,the,house])->true.
+s([the,small,dog,walks,in,the,house])->true.
+s([the,small,man,hits,the,dog])->true.
+s([the,small,dog,walks,on,the,man])->true.
+s([the,man,walks,into,the,house])->true.
+s([the,small,man,hits,the,dog])->true.
+s([the,dog,walks,into,the,house])->true.

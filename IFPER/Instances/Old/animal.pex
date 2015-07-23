@@ -1,0 +1,16 @@
+class(dog,mammal)->true.
+class(dolphin,mammal)->true.
+class(platypus,mammal)->true.
+class(bat,mammal)->true.
+class(trout,fish)->true.
+class(herring,fish)->true.
+class(shark,fish)->true.
+class(eel,fish)->true.
+class(lizard,reptile)->true.
+class(crocodile,reptile)->true.
+class(t_rex,reptile)->true.
+class(snake,reptile)->true.
+class(turtle,reptile)->true.
+class(eagle,bird)->true.
+class(ostrich,bird)->true.
+class(penguin,bird)->true.

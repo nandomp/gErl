@@ -1,0 +1,3 @@
+sust([x])->[b].
+sust([e,s,t])->[e,r].
+sust([r])->[b].

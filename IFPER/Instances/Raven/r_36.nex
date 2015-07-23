@@ -1,0 +1,20 @@
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[false,[75],[up],[above]].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],false,[up],[above]].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],[75],false,[above]].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],[75],[up],false].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[false,false,[up],[above]].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[false,false,false,[above]].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[false,false,false,false].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],false,false,[above]].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],[75],false,false].
+r([[[[a, 0, up,above]], [[a,25, up,above]], [[a, 50, up,above]]],  [[[b,25, up,above]], [[b,50, up,above]]]])->[[b],false,false,false].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[false,[50],[up],[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],false,[up],[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],[50],false,[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],[50],[up],false].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[false,false,[up],[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[false,false,false,[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[false,false,false,above].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],false,false,[above]].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],[50],false,false].
+r([[[[b, 25, up, above]], [[b, 50, up, above]], [[b,75, up, above]]],  [[[a, 0, up,above]], [[a,25, up,above]]]])->[[a],false,false,false].

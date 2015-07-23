@@ -1,0 +1,6 @@
+cup(y,up,y,y,side,y,ceramic)->true.
+cup(y,up,n,y,n,y,styrofoam)->true.
+cup(y,up,n,y,n,y,paper)->true.
+cup(y,up,y,n,n,y,styrofoam)->true.
+cup(y,up,n,n,side,y,paper)->true.
+cup(y,up,n,y,side,y,paper)->true.

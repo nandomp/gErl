@@ -1,0 +1,7 @@
+first([a1,b1,c1])->b1.
+first([a1,b1,c1])->c1.
+first([d1,e1,f1])->e1.
+first([d1,e1,f1])->f1.
+first([g1,h1,i1])->h1.
+first([g1,h1,i1])->i1.
+first([])->a.

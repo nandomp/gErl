@@ -1,0 +1,6 @@
+r([[[[a, no]], [[a, cir]], [[a, squ]]],  [[[b, no]], [[b, cir]]]])->[[a],[no]].
+r([[[[a, no]], [[a, cir]], [[a, squ]]],  [[[b, cir]], [[b, squ]]]])->[[a],[cir]].
+r([[[[a, no]], [[a, cir]], [[a, squ]]],  [[[b, no]], [[b, squ]]]])->[[a],[squ]].
+r([[[[b, no]], [[b, cir]], [[b, squ]]],  [[[a, no]], [[a, cir]]]])->[[b],[no]].
+r([[[[b, no]], [[b, cir]], [[b, squ]]],  [[[a, cir]], [[a, squ]]]])->[[b],[cir]].
+r([[[[b, no]], [[b, cir]], [[b, squ]]],  [[[a, no]], [[a, squ]]]])->[[b],[squ]].
